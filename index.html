@@ -285,20 +285,72 @@ function Services() {
 }
 
 /* ============================================================
-   TESTIMONIALS
+   TESTIMONIALS SECTION — FULL RESTORED VERSION
 ============================================================ */
 function Testimonials() {
-
   const groups = {
     parents: [
-      { quote: "My daughter Katie… now reading confidently!", author: "Loretta V." },
-      { quote: "My three children can read without frustration.", author: "Ann N." },
+      {
+        quote:
+          "My daughter, Katie... It has been one year. Katie not only does the alphabet, but she was recently re-evaluated and tested at a 3.3 level for automatic sight words... She has a wonderful sense of accomplishment – her self-confidence is wonderful.",
+        author: "Loretta V."
+      },
+      {
+        quote:
+          "Thanks to the teachers from Reading Connections, my three children can read without being frustrated.",
+        author: "Ann N."
+      },
+      {
+        quote:
+          "The teachers at Reading Connections are very friendly and are eager to help my sons with any concerns I may have.",
+        author: "Debra M."
+      },
+      {
+        quote:
+          "My daughter, Heather... In 6th grade last year, she was far behind... This year, as a 7th grader, she is receiving B’s or C’s... Her self-esteem and whole attitude towards school has changed.",
+        author: "Jane K."
+      },
+      {
+        quote:
+          "I have had three children at Reading Connections and it has helped every one of them... Children cannot go far if they cannot read.",
+        author: "Pam K."
+      }
     ],
+
     teachers: [
-      { quote: "Mary Bowers’ methods are fantastic!", author: "A Teacher" },
+      {
+        quote:
+          "I worked with Mary Bowers... Her methods are fantastic!",
+        author: "A Teacher"
+      },
+      {
+        quote:
+          "This approach to teaching reading is truly unique. The results are extremely impressive.",
+        author: "A Teacher"
+      },
+      {
+        quote:
+          "I taught first grade with Mary Bowers... Mary’s reading program has made a wonderful difference.",
+        author: "A Teacher"
+      }
     ],
+
     students: [
-      { quote: "My reading level went up a full grade!", author: "Jayson S." },
+      {
+        quote:
+          "My reading level went up a full grade in three months.",
+        author: "Jayson S."
+      },
+      {
+        quote:
+          "Reading Connections is a fun helping place for kids.",
+        author: "Derek M."
+      },
+      {
+        quote:
+          "It’s easier to learn my words and read since I’ve gone to Reading Connections.",
+        author: "Alex & Tessa M."
+      }
     ]
   };
 
@@ -306,20 +358,28 @@ function Testimonials() {
 
   return (
     <section id="testimonials" className="py-20 container mx-auto px-6">
-      <h2 className="text-4xl font-extrabold text-center">What People Are Saying</h2>
+      <h2 className="text-4xl font-extrabold text-center text-slate-900">
+        What People Are Saying
+      </h2>
 
+      {/* TABS */}
       <div className="mt-8 flex justify-center gap-6 border-b pb-4 text-lg font-bold">
         {["parents", "teachers", "students"].map(t => (
           <button
             key={t}
-            className={tab === t ? "text-sky-600 border-b-2 border-sky-600 pb-1" : "text-slate-500"}
             onClick={() => setTab(t)}
+            className={
+              tab === t
+                ? "text-sky-600 border-b-2 border-sky-600 pb-1"
+                : "text-slate-500"
+            }
           >
             {t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
 
+      {/* TESTIMONIAL CARDS */}
       <div className="grid md:grid-cols-2 gap-8 mt-12">
         {groups[tab].map((item, i) => (
           <div key={i} className="bg-white p-6 rounded-xl shadow">
@@ -327,13 +387,17 @@ function Testimonials() {
               "{item.quote}"
               <SpeakButton text={item.quote} />
             </p>
-            <p className="mt-4 text-right text-sky-600 font-bold">{item.author}</p>
+
+            <p className="mt-4 text-right text-sky-600 font-bold">
+              — {item.author}
+            </p>
           </div>
         ))}
       </div>
     </section>
   );
 }
+
 
 /* ============================================================
    CHATBOT
