@@ -1,54 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reading Results | Reading Connections Inc.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reading Connections – Results Dashboard</title>
 
-  <!-- TailwindCSS -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- React + ReactDOM -->
+  <!-- React, ReactDOM, Babel -->
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-  <!-- Babel (JSX compiler) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <!-- Recharts -->
   <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
 
+  <style>
+    html { scroll-behavior: smooth; }
+  </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-slate-100">
 
-  <!-- HEADER (Click to go back to main site) -->
-  <header class="bg-sky-600 text-white shadow-lg sticky top-0 z-50">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="index.html">
-        <img src="https://i.ibb.co/vvRx255r/RCINC-Logo-WHT-1.png"
-          alt="Reading Connections Inc. logo" class="h-12 w-auto" />
-      </a>
-      <h1 class="text-xl font-bold">Results Dashboard</h1>
-    </div>
-  </header>
+  <!-- Root -->
+  <div id="root"></div>
 
-  <div id="root" class="p-6"></div>
-
+  <!-- React Code -->
   <script type="text/babel">
 
     const {
-      LineChart, Line, BarChart, Bar, XAxis, YAxis,
-      CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+      LineChart, Line,
+      BarChart, Bar,
+      XAxis, YAxis,
+      CartesianGrid, Tooltip, Legend,
+      ResponsiveContainer,
       ScatterChart, Scatter
     } = Recharts;
 
     /* ============================================================
-       FULL RESULTS COMPONENT
+       HEADER
     ============================================================ */
+    function Header() {
+      return (
+        <header className="bg-sky-600 text-white shadow-lg sticky top-0 z-50">
+          <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+            <img
+              src="https://i.ibb.co/vvRx255r/RCINC-Logo-WHT-1.png"
+              alt="Reading Connections Inc. logo"
+              className="h-12 w-auto"
+            />
 
-    function ReadingResults2ndGrade() {
+            <h1 className="text-2xl font-bold">Results Dashboard</h1>
+          </div>
+        </header>
+      );
+    }
+
+    /* ============================================================
+       RESULTS DASHBOARD
+    ============================================================ */
+    function ResultsPage() {
       const [activeTab, setActiveTab] = React.useState("overview");
 
       const studentData = [
@@ -70,203 +82,141 @@
         { student: 16, fluency1: 2.3, spelling1: 1.7, fluency2: 4.1, spelling2: 3.7 },
         { student: 17, fluency1: 3.5, spelling1: 3.2, fluency2: 6.4, spelling2: 4.7 },
         { student: 18, fluency1: 1.8, spelling1: 1.4, fluency2: 2.6, spelling2: 4.4 },
-        { student: 19, fluency1: 3.3, spelling1: 1.7, fluency2: 3.6, spelling2: 4.2 }
+        { student: 19, fluency1: 3.3, spelling1: 1.7, fluency2: 3.6, spelling2: 4.2 },
       ];
 
       const gainData = studentData.map(s => ({
         student: s.student,
-        fluencyGain: +(s.fluency2 - s.fluency1).toFixed(2),
-        spellingGain: +(s.spelling2 - s.spelling1).toFixed(2),
+        fluencyGain: parseFloat((s.fluency2 - s.fluency1).toFixed(2)),
+        spellingGain: parseFloat((s.spelling2 - s.spelling1).toFixed(2)),
       }));
 
       const metricsData = [
-        { metric: "Word Fluency", pre: 3.1, post: 4.8 },
-        { metric: "Spelling", pre: 2.1, post: 4.0 }
+        { metric: 'Word Fluency', pre: 3.1, post: 4.8 },
+        { metric: 'Spelling', pre: 2.1, post: 4.0 },
       ];
 
       const colors = {
-        pre: "#3B82F6",
-        post: "#10B981",
-        fluency: "#8B5CF6",
-        spelling: "#14B8A6", // teal instead of yellow
-        gain: "#EF4444"
-      };
-
-      const CustomTooltip = ({ active, payload }) => {
-        if (active && payload && payload.length) {
-          return (
-            <div className="bg-white p-3 border-2 border-gray-300 rounded shadow-lg">
-              <p className="font-semibold text-gray-800">
-                {payload[0].payload.student ? `Student ${payload[0].payload.student}` : payload[0].name}
-              </p>
-              {payload.map((entry, index) => (
-                <p key={index} className="text-sm" style={{ color: entry.color }}>
-                  {entry.name}: {entry.value.toFixed(2)}
-                </p>
-              ))}
-            </div>
-          );
-        }
-        return null;
+        pre: '#3B82F6',
+        post: '#10B981',
+        fluency: '#8B5CF6',
+        spelling: '#F97316'
       };
 
       return (
-        <div className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-xl">
-
-          {/* Header */}
-          <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold text-sky-700">Reading Connections Results</h1>
-            <p className="text-lg text-gray-600">Providence School — Second Grade</p>
-            <p className="text-sm text-purple-700 font-semibold">Video Instruction Only | 4-Month Progress</p>
-
-            <div className="mt-4 inline-block bg-gradient-to-r from-green-400 to-emerald-500 text-white px-6 py-2 rounded-full font-bold">
-              📈 Average 5.53 Months Gained in 1 Month
-            </div>
-          </div>
+        <div className="p-8 container mx-auto">
 
           {/* Tabs */}
-          <div className="flex justify-center gap-4 mb-8 flex-wrap">
+          <div className="flex gap-4 justify-center mb-10">
             {["overview", "progress", "gains", "scatter"].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                className={
                   activeTab === tab
-                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-105"
-                    : "bg-white text-gray-700 border-2 border-gray-300 hover:border-blue-500"
-                }`}
+                    ? "px-6 py-2 bg-sky-600 text-white font-bold rounded-lg shadow"
+                    : "px-6 py-2 bg-white border rounded-lg"
+                }
               >
-                {tab === "overview" && "📊 Overview"}
-                {tab === "progress" && "📈 Progress"}
-                {tab === "gains" && "🎯 Gains"}
-                {tab === "scatter" && "💫 Distribution"}
+                {tab.toUpperCase()}
               </button>
             ))}
           </div>
 
-          {/* TABS CONTENT */}
-
-          {/* OVERVIEW */}
+          {/* OVERVIEW TAB */}
           {activeTab === "overview" && (
-            <div className="space-y-8">
-
-              <div className="bg-white p-8 rounded-xl shadow">
-                <h2 className="text-2xl font-bold mb-6">Pre vs Post Assessment</h2>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={metricsData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="metric" />
-                    <YAxis />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend />
-
-                    <Bar dataKey="pre" fill={colors.pre} name="Pre-Test" radius={[8, 8, 0, 0]} />
-                    <Bar dataKey="post" fill={colors.post} name="Post-Test" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
-                <div className="bg-blue-600 text-white p-6 rounded-xl shadow">
-                  <p className="text-sm opacity-90">Word Fluency Improvement</p>
-                  <p className="text-4xl font-bold mt-2">+1.7</p>
-                </div>
-
-                <div className="bg-teal-600 text-white p-6 rounded-xl shadow">
-                  <p className="text-sm opacity-90">Spelling Improvement</p>
-                  <p className="text-4xl font-bold mt-2">+1.9</p>
-                </div>
-              </div>
+            <div className="bg-white p-8 rounded-xl shadow-lg">
+              <h2 className="text-2xl font-bold mb-6">Pre vs Post Assessment</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={metricsData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="metric" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="pre" fill={colors.pre} />
+                  <Bar dataKey="post" fill={colors.post} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           )}
 
-          {/* PROGRESS */}
+          {/* PROGRESS TAB */}
           {activeTab === "progress" && (
-            <div className="bg-white p-8 rounded-xl shadow">
+            <div className="bg-white p-8 rounded-xl shadow-lg">
               <h2 className="text-2xl font-bold mb-6">Student Progress</h2>
-
               <ResponsiveContainer width="100%" height={400}>
                 <LineChart data={studentData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="student" />
                   <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip />
                   <Legend />
-
-                  <Line type="monotone" dataKey="fluency1" stroke={colors.pre} name="Fluency (Pre)" strokeWidth={2} />
-                  <Line type="monotone" dataKey="fluency2" stroke={colors.fluency} name="Fluency (Post)" strokeWidth={2} />
-
-                  <Line type="monotone" dataKey="spelling1" stroke="#64748B" name="Spelling (Pre)" strokeWidth={2} />
-                  <Line type="monotone" dataKey="spelling2" stroke={colors.spelling} name="Spelling (Post)" strokeWidth={2} />
+                  <Line dataKey="fluency1" stroke={colors.pre} name="Fluency (Pre)" />
+                  <Line dataKey="fluency2" stroke={colors.fluency} name="Fluency (Post)" />
+                  <Line dataKey="spelling1" stroke="#94A3B8" name="Spelling (Pre)" />
+                  <Line dataKey="spelling2" stroke={colors.spelling} name="Spelling (Post)" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           )}
 
-          {/* GAINS */}
+          {/* GAINS TAB */}
           {activeTab === "gains" && (
-            <div className="bg-white p-8 rounded-xl shadow">
-              <h2 className="text-2xl font-bold mb-6">Individual Student Gains</h2>
+            <div className="bg-white p-8 rounded-xl shadow-lg">
+              <h2 className="text-2xl font-bold mb-6">Individual Gains</h2>
 
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={gainData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="student" />
                   <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip />
                   <Legend />
-
-                  <Bar dataKey="fluencyGain" fill={colors.fluency} name="Fluency Gain" />
-                  <Bar dataKey="spellingGain" fill={colors.spelling} name="Spelling Gain" />
+                  <Bar dataKey="fluencyGain" fill={colors.fluency} />
+                  <Bar dataKey="spellingGain" fill={colors.spelling} />
                 </BarChart>
               </ResponsiveContainer>
-
-              <p className="text-center mt-4 font-semibold text-gray-700">
-                🎉 All 19 students showed measurable improvement
-              </p>
             </div>
           )}
 
-          {/* SCATTER */}
+          {/* SCATTER TAB */}
           {activeTab === "scatter" && (
-            <div className="bg-white p-8 rounded-xl shadow">
-              <h2 className="text-2xl font-bold mb-6">Fluency vs Spelling (Pre-Test)</h2>
+            <div className="bg-white p-8 rounded-xl shadow-lg">
+              <h2 className="text-2xl font-bold mb-6">Fluency vs Spelling Correlation</h2>
 
               <ResponsiveContainer width="100%" height={400}>
                 <ScatterChart>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" dataKey="fluency1" name="Fluency" />
-                  <YAxis type="number" dataKey="spelling1" name="Spelling" />
-
-                  <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-                  <Scatter name="Students" data={studentData} fill={colors.pre} />
+                  <XAxis dataKey="fluency1" name="Fluency" />
+                  <YAxis dataKey="spelling1" name="Spelling" />
+                  <Tooltip />
+                  <Scatter data={studentData} fill={colors.pre} />
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
           )}
-
-          {/* Footer Stats */}
-          <div className="mt-10 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 rounded-xl">
-            <div className="grid grid-cols-2 md:grid-cols-4 text-center gap-4">
-              <div><p className="text-3xl font-bold">19</p><p>Students</p></div>
-              <div><p className="text-3xl font-bold">100%</p><p>Improved</p></div>
-              <div><p className="text-3xl font-bold">5.53</p><p>Avg Months Gained</p></div>
-              <div><p className="text-3xl font-bold">1</p><p>Month Duration</p></div>
-            </div>
-          </div>
 
         </div>
       );
     }
 
     /* ============================================================
-       RENDER ROOT
+       RENDER APP
     ============================================================ */
+    function App() {
+      return (
+        <>
+          <Header />
+          <ResultsPage />
+        </>
+      );
+    }
+
     const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<ReadingResults2ndGrade />);
+    root.render(<App />);
 
   </script>
 
 </body>
-
 </html>
