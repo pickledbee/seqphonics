@@ -483,16 +483,17 @@ function Chatbot() {
         <div className="fixed bottom-6 right-6 w-full max-w-sm h-[550px] bg-white rounded-xl shadow-2xl flex flex-col border border-slate-300">
 
           {/* HEADER */}
-          <div className="bg-sky-600 text-white p-4 font-bold flex justify-between items-center">
-            <span>Reading Connections Chat</span>
+         <div className="bg-sky-600 text-white p-4 font-bold flex justify-between items-center">
+  <span>Reading Connections Chat</span>
 
-            <button
-              onClick={() => setOpen(false)}
-              className="bg-white text-sky-600 px-2 py-1 rounded shadow"
-            >
-              Close
-            </button>
-          </div>
+  <button
+    onClick={() => setOpen(false)}
+    className="bg-white text-sky-600 px-3 py-1 rounded font-bold shadow hover:bg-slate-100"
+  >
+    ✖ Close
+  </button>
+</div>
+
 
           {/* MESSAGES */}
           <div className="flex-1 p-4 overflow-y-auto bg-slate-50 space-y-4">
