@@ -61,14 +61,34 @@ let selectedVoice = null;
 function loadBestVoice() {
   const voices = window.speechSynthesis.getVoices();
 
-  const preferred = voices.find(v =>
-    v.name.includes("Google") ||
-    v.name.includes("Natural") ||
-    v.name.includes("Neural")
-  );
+  // Try the clearest voices first (Chrome/Edge)
+  const priorityVoices = [
+    "Google US English",
+    "Google UK English Female",
+    "Microsoft Aria Online (Natural)",
+    "Microsoft Jenny Online (Natural)"
+  ];
 
-  selectedVoice = preferred || voices[0] || null;
+  // Find the first matching installed voice
+  for (const name of priorityVoices) {
+    const voice = voices.find(v => v.name === name);
+    if (voice) {
+      selectedVoice = voice;
+      console.log("Selected voice:", voice.name);
+      return;
+    }
+  }
+
+  // Fallback: Anything with Google/Natural
+  selectedVoice =
+    voices.find(v => v.name.includes("Google")) ||
+    voices.find(v => v.name.includes("Natural")) ||
+    voices[0] ||
+    null;
+
+  console.log("Using fallback voice:", selectedVoice?.name);
 }
+
 
 window.speechSynthesis.onvoiceschanged = loadBestVoice;
 
@@ -78,8 +98,8 @@ function speakText(text) {
 
   if (selectedVoice) utter.voice = selectedVoice;
   utter.pitch = 1;
-  utter.rate = 0.98;
-  utter.volume = 1;
+utter.rate = 1;     // Perfect clarity speed
+utter.volume = 1;
 
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utter);
@@ -143,7 +163,7 @@ function Header() {
 ============================================================ */
 function Hero() {
   const introText = `Welcome to Reading Connections, located in Hobart, Wisconsin. 
-  For over 25 years, we have been dedicated to helping children and adults improve 
+  For over 30 years, we have been dedicated to helping children and adults improve 
   their reading, spelling, and comprehension skills using a proven, multisensory 
   phonics method. Students typically achieve 4.8 months of reading progress in one month.`;
 
