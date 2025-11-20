@@ -40,7 +40,7 @@
     } = Recharts;
 
     /* ============================================================
-          HEADER (NO JSX)
+          HEADER (UPDATED WITH HOME LINK)
     ============================================================ */
     function Header() {
       return React.createElement(
@@ -49,15 +49,29 @@
         React.createElement(
           "div",
           { className: "container mx-auto px-6 py-4 flex justify-between items-center" },
-          React.createElement("img", {
-            src: "https://i.ibb.co/vvRx255r/RCINC-Logo-WHT-1.png",
-            alt: "Reading Connections Inc. logo",
-            className: "h-12 w-auto"
-          }),
+          
+          // LEFT SIDE: Logo + Title Group
+          React.createElement("div", { className: "flex items-center gap-4" },
+            React.createElement("img", {
+              src: "https://i.ibb.co/vvRx255r/RCINC-Logo-WHT-1.png",
+              alt: "Reading Connections Inc. logo",
+              className: "h-10 md:h-12 w-auto"
+            }),
+            React.createElement(
+              "h1",
+              { className: "text-xl md:text-2xl font-bold hidden sm:block" },
+              "Results Dashboard"
+            )
+          ),
+
+          // RIGHT SIDE: Return to Home Button
           React.createElement(
-            "h1",
-            { className: "text-2xl font-bold" },
-            "Results Dashboard"
+            "a",
+            { 
+              href: "index.html", // Points back to your main file
+              className: "bg-sky-700 hover:bg-sky-800 border border-sky-500 text-white px-4 py-2 rounded-lg font-semibold transition text-sm flex items-center gap-2 shadow-sm" 
+            },
+            "← Return to Home"
           )
         )
       );
@@ -116,7 +130,7 @@
         /* TAB BUTTONS */
         React.createElement(
           "div",
-          { className: "flex gap-4 justify-center mb-10" },
+          { className: "flex gap-4 justify-center mb-10 flex-wrap" },
           ["overview", "progress", "gains", "scatter"].map(tab =>
             React.createElement(
               "button",
@@ -126,7 +140,7 @@
                 className:
                   activeTab === tab
                     ? "px-6 py-2 bg-sky-600 text-white font-bold rounded-lg shadow"
-                    : "px-6 py-2 bg-white border rounded-lg"
+                    : "px-6 py-2 bg-white border rounded-lg hover:bg-slate-50"
               },
               tab.toUpperCase()
             )
