@@ -98,6 +98,9 @@ window.speechSynthesis.onvoiceschanged = loadBestVoice;
 function speakText(text) {
   if (!text) return;
 
+  // Pronunciation override for the entire website
+  text = text.replace(/Reading Connections/gi, "Reee-ding Connections");
+
   const utter = new SpeechSynthesisUtterance(text);
 
   if (selectedVoice) utter.voice = selectedVoice;
