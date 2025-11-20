@@ -1,67 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reading Results | Reading Connections</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reading Results | Reading Connections Inc.</title>
 
   <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- React -->
+  <!-- React + ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
-  <!-- Babel for JSX -->
+  <!-- Babel (JSX compiler) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Recharts -->
+  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+
 </head>
 
 <body class="bg-slate-50 text-slate-800">
-  <div id="root"></div>
+
+  <!-- HEADER (Click to go back to main site) -->
+  <header class="bg-sky-600 text-white shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html">
+        <img src="https://i.ibb.co/vvRx255r/RCINC-Logo-WHT-1.png"
+          alt="Reading Connections Inc. logo" class="h-12 w-auto" />
+      </a>
+      <h1 class="text-xl font-bold">Results Dashboard</h1>
+    </div>
+  </header>
+
+  <div id="root" class="p-6"></div>
 
   <script type="text/babel">
 
+    const {
+      LineChart, Line, BarChart, Bar, XAxis, YAxis,
+      CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+      ScatterChart, Scatter
+    } = Recharts;
+
     /* ============================================================
-       RESULTS PAGE COMPONENT
+       FULL RESULTS COMPONENT
     ============================================================ */
 
-    function ResultsPage() {
+    function ReadingResults2ndGrade() {
+      const [activeTab, setActiveTab] = React.useState("overview");
+
+      const studentData = [
+        { student: 1, fluency1: 2.7, spelling1: 2.2, fluency2: 4.8, spelling2: 4.0 },
+        { student: 2, fluency1: 3.1, spelling1: 1.7, fluency2: 5.1, spelling2: 3.4 },
+        { student: 3, fluency1: 2.9, spelling1: 1.7, fluency2: 4.3, spelling2: 3.4 },
+        { student: 4, fluency1: 2.1, spelling1: 1.0, fluency2: 3.9, spelling2: 2.7 },
+        { student: 5, fluency1: 3.6, spelling1: 3.0, fluency2: 4.2, spelling2: 4.7 },
+        { student: 6, fluency1: 2.8, spelling1: 2.0, fluency2: 6.4, spelling2: 4.2 },
+        { student: 7, fluency1: 2.0, spelling1: 3.0, fluency2: 3.6, spelling2: 3.7 },
+        { student: 8, fluency1: 3.3, spelling1: 1.7, fluency2: 4.8, spelling2: 4.7 },
+        { student: 9, fluency1: 3.1, spelling1: 2.7, fluency2: 4.5, spelling2: 4.7 },
+        { student: 10, fluency1: 3.0, spelling1: 1.7, fluency2: 4.9, spelling2: 3.4 },
+        { student: 11, fluency1: 5.0, spelling1: 3.2, fluency2: 7.1, spelling2: 6.2 },
+        { student: 12, fluency1: 2.1, spelling1: 1.7, fluency2: 4.4, spelling2: 2.7 },
+        { student: 13, fluency1: 1.0, spelling1: 0.8, fluency2: 2.6, spelling2: 1.2 },
+        { student: 14, fluency1: 7.0, spelling1: 4.2, fluency2: 8.1, spelling2: 5.2 },
+        { student: 15, fluency1: 3.4, spelling1: 2.2, fluency2: 4.9, spelling2: 4.7 },
+        { student: 16, fluency1: 2.3, spelling1: 1.7, fluency2: 4.1, spelling2: 3.7 },
+        { student: 17, fluency1: 3.5, spelling1: 3.2, fluency2: 6.4, spelling2: 4.7 },
+        { student: 18, fluency1: 1.8, spelling1: 1.4, fluency2: 2.6, spelling2: 4.4 },
+        { student: 19, fluency1: 3.3, spelling1: 1.7, fluency2: 3.6, spelling2: 4.2 }
+      ];
+
+      const gainData = studentData.map(s => ({
+        student: s.student,
+        fluencyGain: +(s.fluency2 - s.fluency1).toFixed(2),
+        spellingGain: +(s.spelling2 - s.spelling1).toFixed(2),
+      }));
+
+      const metricsData = [
+        { metric: "Word Fluency", pre: 3.1, post: 4.8 },
+        { metric: "Spelling", pre: 2.1, post: 4.0 }
+      ];
+
+      const colors = {
+        pre: "#3B82F6",
+        post: "#10B981",
+        fluency: "#8B5CF6",
+        spelling: "#14B8A6", // teal instead of yellow
+        gain: "#EF4444"
+      };
+
+      const CustomTooltip = ({ active, payload }) => {
+        if (active && payload && payload.length) {
+          return (
+            <div className="bg-white p-3 border-2 border-gray-300 rounded shadow-lg">
+              <p className="font-semibold text-gray-800">
+                {payload[0].payload.student ? `Student ${payload[0].payload.student}` : payload[0].name}
+              </p>
+              {payload.map((entry, index) => (
+                <p key={index} className="text-sm" style={{ color: entry.color }}>
+                  {entry.name}: {entry.value.toFixed(2)}
+                </p>
+              ))}
+            </div>
+          );
+        }
+        return null;
+      };
+
       return (
-        <div className="p-8 max-w-5xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-10 text-sky-700">
-            Reading Connections – Second Grade Results
-          </h1>
+        <div className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-xl">
 
-          <p className="text-center text-lg mb-10">
-            Detailed academic growth results from a 19-student cohort using only video-based Reading Connections instruction.
-          </p>
+          {/* Header */}
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-bold text-sky-700">Reading Connections Results</h1>
+            <p className="text-lg text-gray-600">Providence School — Second Grade</p>
+            <p className="text-sm text-purple-700 font-semibold">Video Instruction Only | 4-Month Progress</p>
 
-          {/* You can paste your entire React results component here */}
-          <ResultsCharts />
+            <div className="mt-4 inline-block bg-gradient-to-r from-green-400 to-emerald-500 text-white px-6 py-2 rounded-full font-bold">
+              📈 Average 5.53 Months Gained in 1 Month
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex justify-center gap-4 mb-8 flex-wrap">
+            {["overview", "progress", "gains", "scatter"].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                  activeTab === tab
+                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-105"
+                    : "bg-white text-gray-700 border-2 border-gray-300 hover:border-blue-500"
+                }`}
+              >
+                {tab === "overview" && "📊 Overview"}
+                {tab === "progress" && "📈 Progress"}
+                {tab === "gains" && "🎯 Gains"}
+                {tab === "scatter" && "💫 Distribution"}
+              </button>
+            ))}
+          </div>
+
+          {/* TABS CONTENT */}
+
+          {/* OVERVIEW */}
+          {activeTab === "overview" && (
+            <div className="space-y-8">
+
+              <div className="bg-white p-8 rounded-xl shadow">
+                <h2 className="text-2xl font-bold mb-6">Pre vs Post Assessment</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={metricsData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="metric" />
+                    <YAxis />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+
+                    <Bar dataKey="pre" fill={colors.pre} name="Pre-Test" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="post" fill={colors.post} name="Post-Test" radius={[8, 8, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-blue-600 text-white p-6 rounded-xl shadow">
+                  <p className="text-sm opacity-90">Word Fluency Improvement</p>
+                  <p className="text-4xl font-bold mt-2">+1.7</p>
+                </div>
+
+                <div className="bg-teal-600 text-white p-6 rounded-xl shadow">
+                  <p className="text-sm opacity-90">Spelling Improvement</p>
+                  <p className="text-4xl font-bold mt-2">+1.9</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* PROGRESS */}
+          {activeTab === "progress" && (
+            <div className="bg-white p-8 rounded-xl shadow">
+              <h2 className="text-2xl font-bold mb-6">Student Progress</h2>
+
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart data={studentData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="student" />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+
+                  <Line type="monotone" dataKey="fluency1" stroke={colors.pre} name="Fluency (Pre)" strokeWidth={2} />
+                  <Line type="monotone" dataKey="fluency2" stroke={colors.fluency} name="Fluency (Post)" strokeWidth={2} />
+
+                  <Line type="monotone" dataKey="spelling1" stroke="#64748B" name="Spelling (Pre)" strokeWidth={2} />
+                  <Line type="monotone" dataKey="spelling2" stroke={colors.spelling} name="Spelling (Post)" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+
+          {/* GAINS */}
+          {activeTab === "gains" && (
+            <div className="bg-white p-8 rounded-xl shadow">
+              <h2 className="text-2xl font-bold mb-6">Individual Student Gains</h2>
+
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={gainData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="student" />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+
+                  <Bar dataKey="fluencyGain" fill={colors.fluency} name="Fluency Gain" />
+                  <Bar dataKey="spellingGain" fill={colors.spelling} name="Spelling Gain" />
+                </BarChart>
+              </ResponsiveContainer>
+
+              <p className="text-center mt-4 font-semibold text-gray-700">
+                🎉 All 19 students showed measurable improvement
+              </p>
+            </div>
+          )}
+
+          {/* SCATTER */}
+          {activeTab === "scatter" && (
+            <div className="bg-white p-8 rounded-xl shadow">
+              <h2 className="text-2xl font-bold mb-6">Fluency vs Spelling (Pre-Test)</h2>
+
+              <ResponsiveContainer width="100%" height={400}>
+                <ScatterChart>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" dataKey="fluency1" name="Fluency" />
+                  <YAxis type="number" dataKey="spelling1" name="Spelling" />
+
+                  <Tooltip cursor={{ strokeDasharray: "3 3" }} />
+                  <Scatter name="Students" data={studentData} fill={colors.pre} />
+                </ScatterChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+
+          {/* Footer Stats */}
+          <div className="mt-10 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 rounded-xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 text-center gap-4">
+              <div><p className="text-3xl font-bold">19</p><p>Students</p></div>
+              <div><p className="text-3xl font-bold">100%</p><p>Improved</p></div>
+              <div><p className="text-3xl font-bold">5.53</p><p>Avg Months Gained</p></div>
+              <div><p className="text-3xl font-bold">1</p><p>Month Duration</p></div>
+            </div>
+          </div>
+
         </div>
       );
     }
 
     /* ============================================================
-       PASTE YOUR FULL RESULTS COMPONENT HERE
-    ============================================================ */
-
-    function ResultsCharts() {
-      return (
-        <div className="text-center text-xl font-bold text-red-600 p-10 bg-white shadow rounded-xl">
-          Your results charts will appear here once pasted.
-          <br/><br/>
-          ⚠️ You still need to paste your long Recharts component into this section.
-        </div>
-      );
-    }
-
-    /* ============================================================
-       RENDER PAGE
+       RENDER ROOT
     ============================================================ */
     const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<ResultsPage />);
+    root.render(<ReadingResults2ndGrade />);
 
   </script>
+
 </body>
+
 </html>
