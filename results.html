@@ -5,15 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Reading Connections – Results Dashboard</title>
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- React 18 UMD -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  
+  <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
 
-  <!-- Recharts UMD -->
-  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+  <script src="https://unpkg.com/recharts@2.10.3/umd/Recharts.js"></script>
 
   <style>
     html { scroll-behavior: smooth; }
@@ -25,6 +24,12 @@
   <div id="root"></div>
 
   <script>
+    // Ensure the library loaded before running
+    if (typeof Recharts === 'undefined') {
+      console.error("Recharts failed to load. Check your internet connection or script URLs.");
+      document.body.innerHTML = "<h1 style='color:red; padding:20px;'>Error loading chart library.</h1>";
+    }
+
     const {
       LineChart, Line,
       BarChart, Bar,
@@ -35,7 +40,7 @@
     } = Recharts;
 
     /* ============================================================
-         HEADER (NO JSX)
+          HEADER (NO JSX)
     ============================================================ */
     function Header() {
       return React.createElement(
@@ -59,7 +64,7 @@
     }
 
     /* ============================================================
-         RESULTS PAGE (NO JSX)
+          RESULTS PAGE (NO JSX)
     ============================================================ */
     function ResultsPage() {
       const [activeTab, setActiveTab] = React.useState("overview");
@@ -145,8 +150,8 @@
                 React.createElement(YAxis, null),
                 React.createElement(Tooltip, null),
                 React.createElement(Legend, null),
-                React.createElement(Bar, { dataKey: "pre", fill: colors.pre }),
-                React.createElement(Bar, { dataKey: "post", fill: colors.post })
+                React.createElement(Bar, { dataKey: "pre", fill: colors.pre, name: "Pre-Test" }),
+                React.createElement(Bar, { dataKey: "post", fill: colors.post, name: "Post-Test" })
               )
             )
           ),
@@ -164,14 +169,14 @@
                 LineChart,
                 { data: studentData },
                 React.createElement(CartesianGrid, { strokeDasharray: "3 3" }),
-                React.createElement(XAxis, { dataKey: "student" }),
+                React.createElement(XAxis, { dataKey: "student", label: { value: 'Student ID', position: 'insideBottom', offset: -5 } }),
                 React.createElement(YAxis, null),
                 React.createElement(Tooltip, null),
                 React.createElement(Legend, null),
-                React.createElement(Line, { dataKey: "fluency1", stroke: colors.pre }),
-                React.createElement(Line, { dataKey: "fluency2", stroke: colors.fluency }),
-                React.createElement(Line, { dataKey: "spelling1", stroke: "#94A3B8" }),
-                React.createElement(Line, { dataKey: "spelling2", stroke: colors.spelling })
+                React.createElement(Line, { dataKey: "fluency1", stroke: colors.pre, name: "Fluency (Pre)" }),
+                React.createElement(Line, { dataKey: "fluency2", stroke: colors.fluency, name: "Fluency (Post)", strokeWidth: 2 }),
+                React.createElement(Line, { dataKey: "spelling1", stroke: "#94A3B8", name: "Spelling (Pre)" }),
+                React.createElement(Line, { dataKey: "spelling2", stroke: colors.spelling, name: "Spelling (Post)", strokeWidth: 2 })
               )
             )
           ),
@@ -193,8 +198,8 @@
                 React.createElement(YAxis, null),
                 React.createElement(Tooltip, null),
                 React.createElement(Legend, null),
-                React.createElement(Bar, { dataKey: "fluencyGain", fill: colors.fluency }),
-                React.createElement(Bar, { dataKey: "spellingGain", fill: colors.spelling })
+                React.createElement(Bar, { dataKey: "fluencyGain", fill: colors.fluency, name: "Fluency Gain" }),
+                React.createElement(Bar, { dataKey: "spellingGain", fill: colors.spelling, name: "Spelling Gain" })
               )
             )
           ),
@@ -212,10 +217,10 @@
                 ScatterChart,
                 null,
                 React.createElement(CartesianGrid, { strokeDasharray: "3 3" }),
-                React.createElement(XAxis, { dataKey: "fluency1" }),
-                React.createElement(YAxis, { dataKey: "spelling1" }),
-                React.createElement(Tooltip, null),
-                React.createElement(Scatter, { data: studentData, fill: colors.pre })
+                React.createElement(XAxis, { type: "number", dataKey: "fluency1", name: "Fluency Score" }),
+                React.createElement(YAxis, { type: "number", dataKey: "spelling1", name: "Spelling Score" }),
+                React.createElement(Tooltip, { cursor: { strokeDasharray: '3 3' } }),
+                React.createElement(Scatter, { name: "Students", data: studentData, fill: colors.pre })
               )
             )
           )
@@ -223,9 +228,10 @@
     }
 
     /* ============================================================
-         RENDER APP — NO JSX
+          RENDER APP — NO JSX
     ============================================================ */
-    ReactDOM.createRoot(document.getElementById("root")).render(
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(
       React.createElement(
         "div",
         null,
