@@ -5,17 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Reading Connections Inc.</title>
 
-<!-- Tailwind CDN -->
+<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- React / ReactDOM -->
+<!-- React + ReactDOM -->
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
-<!-- Babel for JSX -->
+<!-- Babel for JSX in browser -->
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
 <style>
+  html {
+    scroll-behavior: smooth;
+  }
   .voice-panel {
     animation: fadeIn 0.2s ease-out;
   }
@@ -24,29 +27,53 @@
     to {opacity: 1; transform: scale(1);}
   }
 </style>
-
 </head>
+
 <body class="bg-slate-50">
 <div id="root"></div>
 
 <script type="text/babel">
 
 /* ============================================================
-   NATURAL SPEECH ENGINE (NO API KEY REQUIRED)
+   GLOBAL CONSTANTS
+============================================================ */
+
+const CONTACT_INFO = {
+  name: "Reading Connections Inc.",
+  phone: "(920) 544-5115",
+  email: "rickb@rcinc.org",
+  address: "1260 Centennial Centre Blvd, Suite 200, Hobart, WI 54155",
+  hours: "Monday — Thursday, 2:00 PM – 6:00 PM",
+  tagline: "A science-backed, multisensory phonics program in Hobart, Wisconsin."
+};
+
+const NAV_LINKS = [
+  { name: "Home", href: "#home" },
+  { name: "Mission", href: "#mission" },
+  { name: "Method", href: "#method" },
+  { name: "Services", href: "#services" },
+  { name: "Testimonials", href: "#testimonials" },
+  { name: "Contact", href: "#contact" },
+];
+
+/* ============================================================
+   NATURAL SPEECH ENGINE (NO API KEYS)
 ============================================================ */
 
 function useSpeech(text) {
   const synth = window.speechSynthesis;
-  const utterance = new SpeechSynthesisUtterance(text);
+  const utter = new SpeechSynthesisUtterance(text);
 
-  // Pick most human-like voice
+  // Load voices
   let voices = [];
   const loadVoices = () => {
     voices = synth.getVoices();
-    const naturalPreferred = voices.find(v =>
-      /Samantha|Daniel|Moira|Ava|Zira|Aria|Google US English|Serena|Tom/i.test(v.name)
+
+    // Pick the most human-like voice available
+    const preferred = voices.find(v =>
+      /Samantha|Daniel|Ava|Zira|Aria|Google US English|Moira|Serena|Tom/i.test(v.name)
     );
-    utterance.voice = naturalPreferred || voices[0];
+    utter.voice = preferred || voices[0];
   };
 
   loadVoices();
@@ -54,20 +81,21 @@ function useSpeech(text) {
     window.speechSynthesis.onvoiceschanged = loadVoices;
   }
 
-  utterance.pitch = 1.0;
-  utterance.rate = 0.95;
+  // Natural-sounding parameters
+  utter.pitch = 1.0;
+  utter.rate = 0.95;
 
   return {
-    play: () => { synth.cancel(); synth.speak(utterance); },
+    play: () => { synth.cancel(); synth.speak(utter); },
     pause: () => synth.pause(),
     resume: () => synth.resume(),
     stop: () => synth.cancel(),
-    setRate: (val) => utterance.rate = val
+    changeRate: (r) => utter.rate = r
   };
 }
 
 /* ============================================================
-   SPEECH CONTROL UI — STYLE 3 (TINY ICON → EXPANDS)
+   STYLE 3: SPEAKER ICON → EXPANDING PANEL
 ============================================================ */
 
 function SpeechControls({ text }) {
@@ -75,16 +103,16 @@ function SpeechControls({ text }) {
   const [rate, setRate] = React.useState(0.95);
   const engine = React.useMemo(() => useSpeech(text), [text]);
 
-  const handleRate = (e) => {
-    const val = parseFloat(e.target.value);
-    setRate(val);
-    engine.setRate(val);
+  const syncRate = (e) => {
+    const value = parseFloat(e.target.value);
+    setRate(value);
+    engine.changeRate(value);
   };
 
   if (!open) {
     return (
       <button
-        className="mt-2 text-slate-600 hover:text-slate-800 text-xl"
+        className="text-xl mt-2 text-slate-600 hover:text-slate-800"
         onClick={() => setOpen(true)}
         title="Listen to this section"
       >
@@ -95,31 +123,26 @@ function SpeechControls({ text }) {
 
   return (
     <div className="voice-panel bg-white p-4 mt-3 rounded-xl shadow border border-slate-200">
-      <div className="font-bold text-slate-700 mb-3">Speech Controls</div>
+      <div className="font-bold mb-2 text-slate-700">Speech Controls</div>
 
-      <div className="flex flex-wrap gap-3">
-        <button onClick={engine.play} className="bg-sky-500 text-white px-3 py-1 rounded">Play</button>
-        <button onClick={engine.pause} className="bg-yellow-500 text-white px-3 py-1 rounded">Pause</button>
-        <button onClick={engine.resume} className="bg-green-500 text-white px-3 py-1 rounded">Resume</button>
-        <button onClick={engine.stop} className="bg-red-500 text-white px-3 py-1 rounded">Stop</button>
+      <div className="flex gap-3 flex-wrap">
+        <button className="bg-sky-500 text-white px-3 py-1 rounded" onClick={engine.play}>Play</button>
+        <button className="bg-yellow-500 text-white px-3 py-1 rounded" onClick={engine.pause}>Pause</button>
+        <button className="bg-green-500 text-white px-3 py-1 rounded" onClick={engine.resume}>Resume</button>
+        <button className="bg-red-500 text-white px-3 py-1 rounded" onClick={engine.stop}>Stop</button>
       </div>
 
       <div className="mt-4">
-        <label className="font-semibold text-sm text-slate-700">Speed: {rate.toFixed(2)}</label>
-        <input
-          type="range"
-          min="0.6"
-          max="1.4"
-          step="0.05"
-          value={rate}
-          onChange={handleRate}
-          className="w-full mt-1"
-        />
+        <label className="text-sm font-semibold">Speed: {rate.toFixed(2)}</label>
+        <input type="range" min="0.6" max="1.4" step="0.05"
+               value={rate}
+               onChange={syncRate}
+               className="w-full" />
       </div>
 
       <button
-        onClick={() => setOpen(false)}
         className="mt-3 text-red-500 font-bold underline"
+        onClick={() => setOpen(false)}
       >
         Close
       </button>
@@ -128,75 +151,30 @@ function SpeechControls({ text }) {
 }
 
 /* ============================================================
-   CONSTANTS
-============================================================ */
-
-const CONTACT_INFO = {
-  name: "Reading Connections Inc.",
-  phone: "(920) 544-5115",
-  email: "rickb@rcinc.org",
-  address: "1260 Centennial Centre Blvd, Suite 200, Hobart, WI 54155",
-};
-
-/* Navigation */
-const NAV_LINKS = [
-  { name: "Home", href: "#home" },
-  { name: "Mission", href: "#mission" },
-  { name: "Method", href: "#method" },
-  { name: "Services", href: "#services" },
-  { name: "Testimonials", href: "#testimonials" },
-  { name: "Contact", href: "#contact" },
-];
-
-/* Method Items */
-const METHOD_PRINCIPLES = [
-  { title:"Multisensory Learning", desc:"Engages sight, sound, and touch." },
-  { title:"Sequential Phonics", desc:"Skills taught in the correct order." },
-  { title:"Cognitive Reinforcement", desc:"Builds neural pathways for reading." },
-  { title:"Emotional Transformation", desc:"Restores confidence in learning." },
-];
-
-/* Services */
-const SERVICES = [
-  { name:"Private Lesson", duration:"30 minutes" },
-  { name:"Private Lesson", duration:"60 minutes" },
-  { name:"Evaluation", duration:"60 minutes" },
-  { name:"Initial Consultation", duration:"120 minutes" },
-];
-
-/* Testimonials */
-const TESTIMONIALS = {
-  parents:[
-    {quote:"My child improved faster here than anywhere else.", author:"Parent A"},
-    {quote:"Finally, a method that works!", author:"Parent B"}
-  ],
-  teachers:[
-    {quote:"This method is what schools *should* be using.", author:"Teacher A"}
-  ],
-  students:[
-    {quote:"Reading is easy now!", author:"Student A"}
-  ]
-};
-
-/* ============================================================
-   HEADER
+   HEADER COMPONENT
 ============================================================ */
 
 function Header() {
-  const handleScroll = (e) => {
+  const scroll = (e) => {
     e.preventDefault();
-    document.querySelector(e.target.getAttribute("href"))
-      .scrollIntoView({behavior:"smooth"});
+    const id = e.target.getAttribute("href");
+    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <header className="bg-sky-500 shadow-lg sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center text-white font-bold">
-        <span className="text-xl">Reading Connections Inc.</span>
-        <nav className="hidden md:flex gap-6">
-          {NAV_LINKS.map(l=>(
-            <a key={l.name} href={l.href} onClick={handleScroll}>
-              {l.name}
+      <div className="container mx-auto px-6 py-4 flex items-center justify-between text-white">
+        <h1 className="text-xl font-bold">Reading Connections Inc.</h1>
+
+        <nav className="hidden md:flex gap-6 text-lg font-semibold">
+          {NAV_LINKS.map(link => (
+            <a
+              key={link.name}
+              href={link.href}
+              onClick={scroll}
+              className="hover:text-slate-200"
+            >
+              {link.name}
             </a>
           ))}
         </nav>
@@ -204,136 +182,145 @@ function Header() {
     </header>
   );
 }
-
 /* ============================================================
-   HERO
+   HERO SECTION
 ============================================================ */
 
 function Hero() {
-  const text = "A science-backed, multisensory phonics program helping students achieve an average of 4.8 months of progress in just one month.";
+  const heroText = `
+Welcome to Reading Connections, located in Hobart, Wisconsin. 
+For over 25 years, we have been dedicated to helping children and adults 
+of all ages improve their reading, spelling, and comprehension skills 
+using our proven, multisensory phonics method. Our students typically 
+achieve 4.8 months of reading progress in just one month of instruction. 
+Explore our site to learn more about our method and how we can help your 
+family rediscover the joy of learning.
+`;
 
   return (
-    <section id="home" className="py-16 container mx-auto px-4 md:flex md:items-center md:gap-12">
-      <div>
+    <section id="home" className="py-20 container mx-auto px-6 md:flex md:items-center md:gap-12">
+      <div className="max-w-2xl">
         <h1 className="text-5xl font-extrabold text-slate-800 leading-tight">
-          Unlock Your Child’s <span className="text-sky-500">Reading Potential</span>
+          Unlock Your Child's <span className="text-sky-500">Reading Potential.</span>
         </h1>
 
-        <p className="mt-6 text-lg text-slate-700 max-w-xl">{text}</p>
-        <SpeechControls text={text} />
+        <p className="mt-6 text-lg text-slate-700 whitespace-pre-line">
+          {heroText}
+        </p>
+
+        <div className="mt-3">
+          <SpeechControls text={heroText} />
+        </div>
+
+        <div className="mt-8 flex gap-4">
+          <a href="#services" className="bg-sky-500 text-white px-6 py-3 rounded-lg shadow font-bold">
+            Our Services
+          </a>
+          <a href="#mission" className="bg-white border border-sky-500 text-sky-600 px-6 py-3 rounded-lg shadow font-bold">
+            Learn More
+          </a>
+        </div>
       </div>
 
       <img
         src="https://i.ibb.co/99MfYhk5/Gemini-Generated-Image-tqwti7tqwti7tqwt.png"
-        className="rounded-2xl shadow-2xl max-w-md mt-8 md:mt-0"
+        alt="A tutor helping a young student read a book in a cozy, well-lit room."
+        className="rounded-2xl shadow-2xl max-w-md mt-10 md:mt-0"
       />
     </section>
   );
 }
 
 /* ============================================================
-   MISSION
+   MISSION SECTION
 ============================================================ */
 
 function Mission() {
-  const text = "Nearly every person can learn to read fluently when taught with a method grounded in brain science. We restore confidence and ignite progress where other interventions have failed.";
+  const missionText = `
+Reading Connections exists to prove that nearly every person—child or adult—
+can learn to read fluently when taught with a method grounded in brain science. 
+We empower students to rediscover self-esteem and the joy of learning, 
+serving families who have tried traditional reading interventions without success.
+`;
 
   return (
     <section id="mission" className="py-20 bg-slate-100">
-      <div className="container mx-auto px-4 max-w-3xl text-center">
-        <h2 className="text-4xl font-extrabold text-slate-800">Our Mission</h2>
-        <p className="mt-6 text-lg text-slate-700">{text}</p>
-        <SpeechControls text={text} />
+      <div className="container mx-auto px-6 max-w-3xl text-center">
+        <h2 className="text-4xl font-extrabold text-slate-800">Our Mission: Proven Science, Renewed Confidence</h2>
+
+        <p className="mt-6 text-lg text-slate-700 whitespace-pre-line">{missionText}</p>
+
+        <SpeechControls text={missionText} />
+
+        <div className="mt-12 grid sm:grid-cols-3 gap-8">
+          <div className="bg-white p-6 rounded-xl shadow">
+            <p className="text-4xl text-sky-500 font-extrabold">25+ Years</p>
+            <p className="mt-2 font-bold text-slate-700">Of Proven Results</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow">
+            <p className="text-4xl text-sky-500 font-extrabold">9,000+</p>
+            <p className="mt-2 font-bold text-slate-700">Students Empowered</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow">
+            <p className="text-4xl text-sky-500 font-extrabold">100%</p>
+            <p className="mt-2 font-bold text-slate-700">Word-of-Mouth Growth</p>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
 /* ============================================================
-   METHOD
+   METHOD SECTION
 ============================================================ */
 
 function Method() {
+  const description = `
+Our system was developed from decades of research on how people learn to read and spell. 
+It has been successfully used with over 9,000 children and adults, including many with 
+learning disabilities, Down syndrome, and autism.
+`;
+
+  const principles = [
+    {
+      title: "Multisensory Learning",
+      desc: "Engaging visual, auditory, kinesthetic, and tactile pathways to create strong neural connections for literacy."
+    },
+    {
+      title: "Sequential Phonics",
+      desc: "Teaching skills in a clear, cumulative order, ensuring a solid foundation from basic sounds to complex words."
+    },
+    {
+      title: "Cognitive Reinforcement",
+      desc: "Strengthening neurological processes for decoding and spelling through targeted, repetitive, and adaptive exercises."
+    },
+    {
+      title: "Emotional Transformation",
+      desc: "Overcoming learned helplessness and anxiety around reading to rebuild confidence and restore joy in learning."
+    }
+  ];
+
   return (
-    <section id="method" className="py-20 container mx-auto px-4">
+    <section id="method" className="py-20 container mx-auto px-6">
       <h2 className="text-4xl text-center font-extrabold text-slate-800">
         A Method Grounded in Brain Science
       </h2>
 
+      <p className="mt-6 max-w-3xl mx-auto text-lg text-slate-700 whitespace-pre-line">
+        {description}
+      </p>
+
+      <SpeechControls text={description} />
+
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
-        {METHOD_PRINCIPLES.map(item => {
-          const text = item.desc;
-          return (
-            <div key={item.title} className="bg-slate-50 p-6 rounded-xl shadow">
-              <h3 className="text-xl font-bold text-slate-800">{item.title}</h3>
-              <p className="mt-2 text-slate-700">{text}</p>
-              <SpeechControls text={text} />
-            </div>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-/* ============================================================
-   SERVICES
-============================================================ */
-
-function Services() {
-  const text = "One-on-one instruction tailored to your child’s needs.";
-
-  return (
-    <section id="services" className="py-20 bg-slate-100">
-      <div className="container mx-auto px-4 max-w-3xl text-center">
-        <h2 className="text-4xl font-extrabold text-slate-800">Our Services</h2>
-
-        <p className="mt-6 text-lg text-slate-700">{text}</p>
-        <SpeechControls text={text} />
-
-        <ul className="mt-12 bg-white p-6 rounded-xl shadow space-y-4">
-          {SERVICES.map((s,i)=>(
-            <li key={i} className="flex justify-between border-b pb-2 text-slate-700 font-semibold">
-              <span>{s.name}</span>
-              <span className="font-extrabold text-slate-900">{s.duration}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-/* ============================================================
-   TESTIMONIALS
-============================================================ */
-
-function Testimonials() {
-  const [tab,setTab] = React.useState("parents");
-
-  return (
-    <section id="testimonials" className="py-20 container mx-auto px-4">
-      <h2 className="text-4xl font-extrabold text-slate-800 text-center">
-        What People Are Saying
-      </h2>
-
-      <div className="mt-10 flex justify-center gap-6 border-b pb-4 text-lg font-bold">
-        {["parents","teachers","students"].map(t=>(
-          <button
-            key={t}
-            onClick={()=>setTab(t)}
-            className={tab===t ? "text-sky-500 border-b-2 border-sky-500" : "text-slate-500"}
-          >
-            {t.charAt(0).toUpperCase()+t.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-8 mt-12">
-        {TESTIMONIALS[tab].map((item,i)=>(
-          <div key={i} className="bg-white p-6 rounded-xl shadow">
-            <p className="italic text-slate-700 text-lg">"{item.quote}"</p>
-            <p className="mt-4 text-right text-sky-500 font-bold">{item.author}</p>
+        {principles.map((p, i) => (
+          <div key={i} className="bg-slate-50 p-6 rounded-xl shadow">
+            <h3 className="text-xl font-bold text-slate-800">{p.title}</h3>
+            <p className="mt-2 text-slate-700">{p.desc}</p>
+            <SpeechControls text={p.desc} />
           </div>
         ))}
       </div>
@@ -342,35 +329,205 @@ function Testimonials() {
 }
 
 /* ============================================================
-   CHATBOT
+   SERVICES SECTION
+============================================================ */
+
+function Services() {
+  const text = `
+One-on-one instruction tailored to your child's needs. 
+All lessons are private and confidential.
+`;
+
+  const list = [
+    "Initial Consultation (2 hours)",
+    "Evaluation (1 hour)",
+    "Private Lesson (1 hour)",
+    "Private Lesson (30 mins)"
+  ];
+
+  return (
+    <section id="services" className="py-20 bg-slate-100">
+      <div className="container mx-auto px-6 max-w-3xl text-center">
+        <h2 className="text-4xl font-extrabold text-slate-800">Our Services</h2>
+
+        <p className="mt-6 text-lg text-slate-700 whitespace-pre-line">{text}</p>
+        <SpeechControls text={text} />
+
+        <ul className="mt-12 bg-white p-6 rounded-xl shadow space-y-4">
+          {list.map((item, index) => (
+            <li key={index} className="text-slate-700 font-semibold border-b pb-2">
+              {item}
+            </li>
+          ))}
+        </ul>
+
+        <p className="mt-10 font-bold text-sky-700">
+          Ready to Get Started? Contact us today to schedule your initial consultation 
+          and unlock your child's potential.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   TESTIMONIALS SECTION — SEO-OPTIMIZED COLLAPSIBLE
+============================================================ */
+
+function Testimonials() {
+  const parents = [
+    { quote: "My daughter, Katie... It has been one year. Katie not only does the alphabet, but she was recently re-evaluated and tested at a 3.3 level...", author: "Loretta V." },
+    { quote: "Thanks to the teachers from Reading Connections, my three children can read without being frustrated.", author: "Ann N." },
+    { quote: "The teachers at Reading Connections are very friendly and eager to help my sons.", author: "Debra M." },
+    { quote: "My daughter, Heather… Her self-esteem and attitude toward school has changed.", author: "Jane K." },
+    { quote: "I have had three children at Reading Connections and it has helped every one of them.", author: "Pam K." },
+    { quote: "Lexie was reading at K level… after only 3 months she was at 1st grade, 4th month level.", author: "Peg C." },
+  ];
+
+  const teachers = [
+    { quote: "I worked with Mary Bowers... Her methods are fantastic!", author: "A Teacher" },
+    { quote: "This approach to teaching reading is truly unique. The results are extremely impressive.", author: "A Teacher" },
+    { quote: "Mary’s reading program has made a wonderful difference.", author: "A Teacher" }
+  ];
+
+  const students = [
+    { quote: "My reading level went up a full grade in three months.", author: "Jayson S." },
+    { quote: "Reading Connections is a fun helping place for kids.", author: "Derek M." },
+    { quote: "It’s easier to learn my words and read since I’ve gone to Reading Connections.", author: "Alex & Tessa M." }
+  ];
+
+  return (
+    <section id="testimonials" className="py-24 container mx-auto px-6">
+      <h2 className="text-4xl font-extrabold text-slate-800 text-center mb-12">
+        What People Are Saying
+      </h2>
+
+      {/* Parents */}
+      <details className="bg-white p-6 rounded-xl shadow mb-8">
+        <summary className="cursor-pointer font-bold text-xl text-sky-600">
+          Parent Testimonials
+        </summary>
+
+        <div className="mt-6 space-y-6">
+          {parents.map((t, i) => (
+            <blockquote key={i} className="border-l-4 border-sky-500 pl-4">
+              <p className="italic text-slate-700">"{t.quote}"</p>
+              <p className="mt-2 text-right font-bold text-sky-700">— {t.author}</p>
+            </blockquote>
+          ))}
+        </div>
+      </details>
+
+      {/* Teachers */}
+      <details className="bg-white p-6 rounded-xl shadow mb-8">
+        <summary className="cursor-pointer font-bold text-xl text-sky-600">
+          Teacher Testimonials
+        </summary>
+
+        <div className="mt-6 space-y-6">
+          {teachers.map((t, i) => (
+            <blockquote key={i} className="border-l-4 border-sky-500 pl-4">
+              <p className="italic text-slate-700">"{t.quote}"</p>
+              <p className="mt-2 text-right font-bold text-sky-700">— {t.author}</p>
+            </blockquote>
+          ))}
+        </div>
+      </details>
+
+      {/* Students */}
+      <details className="bg-white p-6 rounded-xl shadow">
+        <summary className="cursor-pointer font-bold text-xl text-sky-600">
+          Student Testimonials
+        </summary>
+
+        <div className="mt-6 space-y-6">
+          {students.map((t, i) => (
+            <blockquote key={i} className="border-l-4 border-sky-500 pl-4">
+              <p className="italic text-slate-700">"{t.quote}"</p>
+              <p className="mt-2 text-right font-bold text-sky-700">— {t.author}</p>
+            </blockquote>
+          ))}
+        </div>
+      </details>
+    </section>
+  );
+}
+/* ============================================================
+   AUDIO SUMMARY SCRIPT SECTION
+============================================================ */
+
+function AudioSummary() {
+  const summaryText = `
+This is the brief on the science-backed reading method from Reading Connections Inc.
+Okay, so Reading Connections Inc., right? Based in Hobart, Wisconsin. For over 25 years,
+they've refined this proven brain science-backed method. Their mission: to show pretty much
+anyone, kids, adults, can learn to read fluently and really get it, tackling the reading crisis.
+
+First off, this isn't just theory. It comes from decades of brain research on how we actually 
+learn to read and spell, how we store letters and sounds. And the proof? It works universally.
+Over 9,000 people helped, including those with Down syndrome or autism. It shows the method taps 
+into how the brain learns, period.
+
+Second, the results: fast and measurable. Get this: students average nearly five months of reading
+progress in just one month of instruction. That's huge. And it's all personalized, one-on-one. 
+They start with a thorough evaluation to set a baseline and target that amazing progress.
+
+Finally, how? It boils down to four core things: Multi-sensory learning: using sight, sound, touch, 
+movement to lock things in. Sequential phonics: building skills step-by-step. Cognitive reinforcement:
+strengthening those brain pathways for reading. And crucially, emotional transformation: helping students 
+overcome learned helplessness and rediscover the joy of learning.
+
+Reading Connections offers evidence-based teaching rooted in brain science, transforming reading skills 
+and confidence one student at a time. Give Reading Connections a call today at nine two zero, five four 
+four, five one one five to learn more!
+  `;
+
+  return (
+    <section className="py-20 container mx-auto px-6">
+      <h2 className="text-3xl font-extrabold text-slate-800 mb-4">
+        Audio Summary of Our Method
+      </h2>
+      <p className="text-slate-700 max-w-4xl whitespace-pre-line">{summaryText}</p>
+      <SpeechControls text={summaryText} />
+    </section>
+  );
+}
+
+/* ============================================================
+   CHATBOT — WITH KNOWLEDGE BASE LOGIC
 ============================================================ */
 
 function Chatbot() {
-  const [open,setOpen] = React.useState(false);
-  const [messages,setMessages] = React.useState([
-    {sender:"bot", text:"Hello! How can I help you today?"}
+  const [open, setOpen] = React.useState(false);
+  const [messages, setMessages] = React.useState([
+    { sender: "bot", text: "Hello! How can I help you learn about Reading Connections Inc. today?" }
   ]);
-  const [input,setInput] = React.useState("");
+  const [input, setInput] = React.useState("");
 
-  const respond = (msg) => {
+  const knowledgeBase = (msg) => {
     const t = msg.toLowerCase();
 
-    if (t.includes("hour")) return "We are open Monday–Thursday, 2–6 PM.";
-    if (t.includes("where") || t.includes("location")) return CONTACT_INFO.address;
-    if (t.includes("service")) return "We offer private lessons, evaluations, and consultations.";
-    if (t.includes("contact")) return `${CONTACT_INFO.phone} — ${CONTACT_INFO.email}`;
-    return "I'm here to help with questions about Reading Connections Inc!";
+    if (t.includes("hour")) return "We are open Monday through Thursday, from 2:00 PM to 6:00 PM.";
+    if (t.includes("contact")) return "You can reach us at (920) 544-5115 or rickb@rcinc.org.";
+    if (t.includes("phone")) return "(920) 544-5115.";
+    if (t.includes("email")) return "Our email is rickb@rcinc.org.";
+    if (t.includes("location") || t.includes("where")) return "We are located at 1260 Centennial Centre Blvd, Suite 200, Hobart, WI 54155.";
+    if (t.includes("service")) return "We offer one-on-one instruction including consultations, evaluations, and private lessons.";
+    if (t.includes("price")) return "For pricing and scheduling, please contact us directly at (920) 544-5115.";
+    if (t.includes("mission")) return "Our mission is to empower readers through a method grounded in brain science.";
+    if (t.includes("method")) return "Our method uses Multisensory Learning, Sequential Phonics, Cognitive Reinforcement, and Emotional Transformation.";
+    return "I'm here to help with questions about our services, mission, hours, or location!";
   };
 
   const sendMessage = () => {
     if (!input.trim()) return;
-    const user = { sender:"user", text:input };
-    setMessages(m=>[...m,user]);
+    const userMsg = { sender: "user", text: input };
+    setMessages((prev) => [...prev, userMsg]);
 
-    setTimeout(()=>{
-      const bot = { sender:"bot", text:respond(input) };
-      setMessages(m=>[...m,bot]);
-    }, 500);
+    setTimeout(() => {
+      const botReply = { sender: "bot", text: knowledgeBase(input) };
+      setMessages((prev) => [...prev, botReply]);
+    }, 600);
 
     setInput("");
   };
@@ -379,53 +536,59 @@ function Chatbot() {
     <>
       {!open && (
         <button
-          onClick={()=>setOpen(true)}
           className="fixed bottom-6 right-6 bg-sky-500 text-white p-4 rounded-full shadow-xl"
+          onClick={() => setOpen(true)}
         >
           Chat
         </button>
       )}
 
       {open && (
-        <div className="fixed bottom-6 right-6 w-full max-w-sm h-[600px] bg-white rounded-xl shadow-2xl flex flex-col">
-          
+        <div className="fixed bottom-6 right-6 w-full max-w-sm h-[600px] bg-white rounded-xl shadow-xl flex flex-col">
+
+          {/* Header */}
           <div className="bg-sky-500 text-white p-4 font-bold flex justify-between">
             <span>Reading Connections Chat</span>
-            <button onClick={()=>setOpen(false)}>X</button>
+            <button onClick={() => setOpen(false)}>X</button>
           </div>
 
+          {/* Messages */}
           <div className="flex-1 p-4 overflow-y-auto bg-slate-50 space-y-4">
-            {messages.map((m,i)=>(
-              <div key={i} className={"flex "+(m.sender==="user"?"justify-end":"justify-start")}>
-                <div className={
-                  "px-4 py-2 rounded-2xl max-w-xs font-semibold "+
-                  (m.sender==="user"?"bg-sky-500 text-white rounded-br-none":"bg-slate-200 text-slate-800 rounded-bl-none")
-                }>
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`px-4 py-2 rounded-2xl max-w-xs font-semibold ${
+                    m.sender === "user"
+                      ? "bg-sky-500 text-white rounded-br-none"
+                      : "bg-slate-200 text-slate-800 rounded-bl-none"
+                  }`}
+                >
                   {m.text}
                 </div>
               </div>
             ))}
           </div>
 
+          {/* Input */}
           <div className="p-4 border-t flex gap-2">
             <input
               value={input}
-              onChange={e=>setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value)}
               className="flex-1 border rounded-full px-4 py-2"
               placeholder="Type a message..."
             />
-            <button onClick={sendMessage} className="bg-sky-500 text-white rounded-full px-4 py-2">
+            <button className="bg-sky-500 text-white rounded-full px-4 py-2" onClick={sendMessage}>
               Send
             </button>
           </div>
 
+          {/* Close Chat Button */}
           <button
-            onClick={()=>setOpen(false)}
-            className="w-full bg-red-500 text-white py-3 font-bold rounded-b-xl hover:bg-red-600"
+            className="w-full bg-red-500 text-white py-3 font-bold rounded-b-xl"
+            onClick={() => setOpen(false)}
           >
             Close Chat
           </button>
-
         </div>
       )}
     </>
@@ -438,12 +601,14 @@ function Chatbot() {
 
 function Footer() {
   return (
-    <footer id="contact" className="bg-slate-800 text-slate-300 py-16 text-center mt-20">
+    <footer id="contact" className="bg-slate-800 text-slate-300 py-20 text-center mt-20">
       <h2 className="text-3xl font-extrabold text-white">{CONTACT_INFO.name}</h2>
       <p className="mt-4 font-bold">{CONTACT_INFO.phone}</p>
       <p className="mt-2">{CONTACT_INFO.email}</p>
       <p className="mt-2">{CONTACT_INFO.address}</p>
-      <p className="mt-4 text-slate-400 text-sm">© {new Date().getFullYear()} Reading Connections Inc.</p>
+      <p className="mt-4 text-slate-400 text-sm">
+        © {new Date().getFullYear()} Reading Connections Inc.
+      </p>
     </footer>
   );
 }
@@ -461,6 +626,7 @@ function App() {
       <Method />
       <Services />
       <Testimonials />
+      <AudioSummary />
       <Chatbot />
       <Footer />
     </>
@@ -472,3 +638,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
 </html>
+
+
