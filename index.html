@@ -1,19 +1,29 @@
-i pasted this in and it says on github page not found: <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Reading Connections Inc.</title>
 
-<!-- Tailwind -->
+<!-- Tailwind CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- React + ReactDOM -->
+<!-- React / ReactDOM -->
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
-<!-- Babel for JSX in browser -->
+<!-- Babel for JSX -->
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<style>
+  .voice-panel {
+    animation: fadeIn 0.2s ease-out;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.95);}
+    to {opacity: 1; transform: scale(1);}
+  }
+</style>
 
 </head>
 <body class="bg-slate-50">
@@ -22,16 +32,113 @@ i pasted this in and it says on github page not found: <!DOCTYPE html>
 <script type="text/babel">
 
 /* ============================================================
+   NATURAL SPEECH ENGINE (NO API KEY REQUIRED)
+============================================================ */
+
+function useSpeech(text) {
+  const synth = window.speechSynthesis;
+  const utterance = new SpeechSynthesisUtterance(text);
+
+  // Pick most human-like voice
+  let voices = [];
+  const loadVoices = () => {
+    voices = synth.getVoices();
+    const naturalPreferred = voices.find(v =>
+      /Samantha|Daniel|Moira|Ava|Zira|Aria|Google US English|Serena|Tom/i.test(v.name)
+    );
+    utterance.voice = naturalPreferred || voices[0];
+  };
+
+  loadVoices();
+  if (voices.length === 0) {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  utterance.pitch = 1.0;
+  utterance.rate = 0.95;
+
+  return {
+    play: () => { synth.cancel(); synth.speak(utterance); },
+    pause: () => synth.pause(),
+    resume: () => synth.resume(),
+    stop: () => synth.cancel(),
+    setRate: (val) => utterance.rate = val
+  };
+}
+
+/* ============================================================
+   SPEECH CONTROL UI — STYLE 3 (TINY ICON → EXPANDS)
+============================================================ */
+
+function SpeechControls({ text }) {
+  const [open, setOpen] = React.useState(false);
+  const [rate, setRate] = React.useState(0.95);
+  const engine = React.useMemo(() => useSpeech(text), [text]);
+
+  const handleRate = (e) => {
+    const val = parseFloat(e.target.value);
+    setRate(val);
+    engine.setRate(val);
+  };
+
+  if (!open) {
+    return (
+      <button
+        className="mt-2 text-slate-600 hover:text-slate-800 text-xl"
+        onClick={() => setOpen(true)}
+        title="Listen to this section"
+      >
+        🔈
+      </button>
+    );
+  }
+
+  return (
+    <div className="voice-panel bg-white p-4 mt-3 rounded-xl shadow border border-slate-200">
+      <div className="font-bold text-slate-700 mb-3">Speech Controls</div>
+
+      <div className="flex flex-wrap gap-3">
+        <button onClick={engine.play} className="bg-sky-500 text-white px-3 py-1 rounded">Play</button>
+        <button onClick={engine.pause} className="bg-yellow-500 text-white px-3 py-1 rounded">Pause</button>
+        <button onClick={engine.resume} className="bg-green-500 text-white px-3 py-1 rounded">Resume</button>
+        <button onClick={engine.stop} className="bg-red-500 text-white px-3 py-1 rounded">Stop</button>
+      </div>
+
+      <div className="mt-4">
+        <label className="font-semibold text-sm text-slate-700">Speed: {rate.toFixed(2)}</label>
+        <input
+          type="range"
+          min="0.6"
+          max="1.4"
+          step="0.05"
+          value={rate}
+          onChange={handleRate}
+          className="w-full mt-1"
+        />
+      </div>
+
+      <button
+        onClick={() => setOpen(false)}
+        className="mt-3 text-red-500 font-bold underline"
+      >
+        Close
+      </button>
+    </div>
+  );
+}
+
+/* ============================================================
    CONSTANTS
 ============================================================ */
+
 const CONTACT_INFO = {
   name: "Reading Connections Inc.",
   phone: "(920) 544-5115",
   email: "rickb@rcinc.org",
   address: "1260 Centennial Centre Blvd, Suite 200, Hobart, WI 54155",
-  hours: "Monday–Thursday, 2–6 PM"
 };
 
+/* Navigation */
 const NAV_LINKS = [
   { name: "Home", href: "#home" },
   { name: "Mission", href: "#mission" },
@@ -41,19 +148,15 @@ const NAV_LINKS = [
   { name: "Contact", href: "#contact" },
 ];
 
-const STATISTICS = [
-  { value:"4.8 Months", label:"Avg Monthly Progress" },
-  { value:"9000+", label:"Students Helped" },
-  { value:"25+ Years", label:"Experience" },
-];
-
+/* Method Items */
 const METHOD_PRINCIPLES = [
-  { title:"Multisensory Learning", description:"Engages sight, sound, touch." },
-  { title:"Sequential Phonics", description:"Skills taught in correct order." },
-  { title:"Cognitive Reinforcement", description:"Strengthens neural pathways." },
-  { title:"Emotional Transformation", description:"Restores confidence." },
+  { title:"Multisensory Learning", desc:"Engages sight, sound, and touch." },
+  { title:"Sequential Phonics", desc:"Skills taught in the correct order." },
+  { title:"Cognitive Reinforcement", desc:"Builds neural pathways for reading." },
+  { title:"Emotional Transformation", desc:"Restores confidence in learning." },
 ];
 
+/* Services */
 const SERVICES = [
   { name:"Private Lesson", duration:"30 minutes" },
   { name:"Private Lesson", duration:"60 minutes" },
@@ -61,6 +164,7 @@ const SERVICES = [
   { name:"Initial Consultation", duration:"120 minutes" },
 ];
 
+/* Testimonials */
 const TESTIMONIALS = {
   parents:[
     {quote:"My child improved faster here than anywhere else.", author:"Parent A"},
@@ -77,11 +181,12 @@ const TESTIMONIALS = {
 /* ============================================================
    HEADER
 ============================================================ */
+
 function Header() {
   const handleScroll = (e) => {
     e.preventDefault();
-    const id = e.target.getAttribute("href");
-    document.querySelector(id).scrollIntoView({ behavior: "smooth" });
+    document.querySelector(e.target.getAttribute("href"))
+      .scrollIntoView({behavior:"smooth"});
   };
 
   return (
@@ -89,9 +194,9 @@ function Header() {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center text-white font-bold">
         <span className="text-xl">Reading Connections Inc.</span>
         <nav className="hidden md:flex gap-6">
-          {NAV_LINKS.map(link=>(
-            <a key={link.name} onClick={handleScroll} href={link.href} className="hover:text-slate-200">
-              {link.name}
+          {NAV_LINKS.map(l=>(
+            <a key={l.name} href={l.href} onClick={handleScroll}>
+              {l.name}
             </a>
           ))}
         </nav>
@@ -103,17 +208,19 @@ function Header() {
 /* ============================================================
    HERO
 ============================================================ */
+
 function Hero() {
+  const text = "A science-backed, multisensory phonics program helping students achieve an average of 4.8 months of progress in just one month.";
+
   return (
     <section id="home" className="py-16 container mx-auto px-4 md:flex md:items-center md:gap-12">
       <div>
         <h1 className="text-5xl font-extrabold text-slate-800 leading-tight">
           Unlock Your Child’s <span className="text-sky-500">Reading Potential</span>
         </h1>
-        <p className="mt-6 text-lg text-slate-700 max-w-xl">
-          A science-backed, multisensory phonics program helping students achieve an average of
-          <strong> 4.8 months of progress in just one month.</strong>
-        </p>
+
+        <p className="mt-6 text-lg text-slate-700 max-w-xl">{text}</p>
+        <SpeechControls text={text} />
       </div>
 
       <img
@@ -125,26 +232,18 @@ function Hero() {
 }
 
 /* ============================================================
-   ABOUT / MISSION
+   MISSION
 ============================================================ */
-function About() {
+
+function Mission() {
+  const text = "Nearly every person can learn to read fluently when taught with a method grounded in brain science. We restore confidence and ignite progress where other interventions have failed.";
+
   return (
     <section id="mission" className="py-20 bg-slate-100">
       <div className="container mx-auto px-4 max-w-3xl text-center">
         <h2 className="text-4xl font-extrabold text-slate-800">Our Mission</h2>
-        <p className="mt-6 text-lg text-slate-700">
-          Nearly every person can learn to read fluently when taught with a method grounded in brain science.
-          We restore confidence and ignite progress where other interventions have failed.
-        </p>
-
-        <div className="mt-12 grid sm:grid-cols-3 gap-8">
-          {STATISTICS.map(stat=>(
-            <div key={stat.label} className="bg-white p-6 rounded-xl shadow">
-              <p className="text-4xl text-sky-500 font-extrabold">{stat.value}</p>
-              <p className="mt-2 font-bold text-slate-700">{stat.label}</p>
-            </div>
-          ))}
-        </div>
+        <p className="mt-6 text-lg text-slate-700">{text}</p>
+        <SpeechControls text={text} />
       </div>
     </section>
   );
@@ -153,18 +252,25 @@ function About() {
 /* ============================================================
    METHOD
 ============================================================ */
+
 function Method() {
   return (
     <section id="method" className="py-20 container mx-auto px-4">
-      <h2 className="text-4xl text-center font-extrabold text-slate-800">A Method Grounded in Brain Science</h2>
+      <h2 className="text-4xl text-center font-extrabold text-slate-800">
+        A Method Grounded in Brain Science
+      </h2>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
-        {METHOD_PRINCIPLES.map(p=>(
-          <div key={p.title} className="bg-slate-50 p-6 rounded-xl shadow">
-            <h3 className="text-xl font-bold text-slate-800">{p.title}</h3>
-            <p className="mt-2 text-slate-700">{p.description}</p>
-          </div>
-        ))}
+        {METHOD_PRINCIPLES.map(item => {
+          const text = item.desc;
+          return (
+            <div key={item.title} className="bg-slate-50 p-6 rounded-xl shadow">
+              <h3 className="text-xl font-bold text-slate-800">{item.title}</h3>
+              <p className="mt-2 text-slate-700">{text}</p>
+              <SpeechControls text={text} />
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -173,12 +279,17 @@ function Method() {
 /* ============================================================
    SERVICES
 ============================================================ */
+
 function Services() {
+  const text = "One-on-one instruction tailored to your child’s needs.";
+
   return (
     <section id="services" className="py-20 bg-slate-100">
       <div className="container mx-auto px-4 max-w-3xl text-center">
         <h2 className="text-4xl font-extrabold text-slate-800">Our Services</h2>
-        <p className="mt-6 text-lg text-slate-700">One-on-one instruction tailored to your child’s needs.</p>
+
+        <p className="mt-6 text-lg text-slate-700">{text}</p>
+        <SpeechControls text={text} />
 
         <ul className="mt-12 bg-white p-6 rounded-xl shadow space-y-4">
           {SERVICES.map((s,i)=>(
@@ -196,12 +307,15 @@ function Services() {
 /* ============================================================
    TESTIMONIALS
 ============================================================ */
+
 function Testimonials() {
   const [tab,setTab] = React.useState("parents");
 
   return (
     <section id="testimonials" className="py-20 container mx-auto px-4">
-      <h2 className="text-4xl font-extrabold text-slate-800 text-center">What People Are Saying</h2>
+      <h2 className="text-4xl font-extrabold text-slate-800 text-center">
+        What People Are Saying
+      </h2>
 
       <div className="mt-10 flex justify-center gap-6 border-b pb-4 text-lg font-bold">
         {["parents","teachers","students"].map(t=>(
@@ -228,12 +342,13 @@ function Testimonials() {
 }
 
 /* ============================================================
-   CHATBOT (TEXT-ONLY)
+   CHATBOT
 ============================================================ */
+
 function Chatbot() {
   const [open,setOpen] = React.useState(false);
   const [messages,setMessages] = React.useState([
-    {sender:"bot", text:"Hello! How can I help you learn about Reading Connections Inc. today?"}
+    {sender:"bot", text:"Hello! How can I help you today?"}
   ]);
   const [input,setInput] = React.useState("");
 
@@ -242,9 +357,9 @@ function Chatbot() {
 
     if (t.includes("hour")) return "We are open Monday–Thursday, 2–6 PM.";
     if (t.includes("where") || t.includes("location")) return CONTACT_INFO.address;
-    if (t.includes("service")) return "We offer private lessons, consultations, and evaluations.";
+    if (t.includes("service")) return "We offer private lessons, evaluations, and consultations.";
     if (t.includes("contact")) return `${CONTACT_INFO.phone} — ${CONTACT_INFO.email}`;
-    return "I'm here to help with questions about our services, mission, and hours!";
+    return "I'm here to help with questions about Reading Connections Inc!";
   };
 
   const sendMessage = () => {
@@ -255,7 +370,7 @@ function Chatbot() {
     setTimeout(()=>{
       const bot = { sender:"bot", text:respond(input) };
       setMessages(m=>[...m,bot]);
-    }, 600);
+    }, 500);
 
     setInput("");
   };
@@ -273,6 +388,7 @@ function Chatbot() {
 
       {open && (
         <div className="fixed bottom-6 right-6 w-full max-w-sm h-[600px] bg-white rounded-xl shadow-2xl flex flex-col">
+          
           <div className="bg-sky-500 text-white p-4 font-bold flex justify-between">
             <span>Reading Connections Chat</span>
             <button onClick={()=>setOpen(false)}>X</button>
@@ -282,11 +398,9 @@ function Chatbot() {
             {messages.map((m,i)=>(
               <div key={i} className={"flex "+(m.sender==="user"?"justify-end":"justify-start")}>
                 <div className={
-                    "px-4 py-2 rounded-2xl max-w-xs font-semibold "+
-                    (m.sender==="user"
-                      ? "bg-sky-500 text-white rounded-br-none"
-                      : "bg-slate-200 text-slate-800 rounded-bl-none")
-                  }>
+                  "px-4 py-2 rounded-2xl max-w-xs font-semibold "+
+                  (m.sender==="user"?"bg-sky-500 text-white rounded-br-none":"bg-slate-200 text-slate-800 rounded-bl-none")
+                }>
                   {m.text}
                 </div>
               </div>
@@ -296,7 +410,7 @@ function Chatbot() {
           <div className="p-4 border-t flex gap-2">
             <input
               value={input}
-              onChange={(e)=>setInput(e.target.value)}
+              onChange={e=>setInput(e.target.value)}
               className="flex-1 border rounded-full px-4 py-2"
               placeholder="Type a message..."
             />
@@ -304,6 +418,14 @@ function Chatbot() {
               Send
             </button>
           </div>
+
+          <button
+            onClick={()=>setOpen(false)}
+            className="w-full bg-red-500 text-white py-3 font-bold rounded-b-xl hover:bg-red-600"
+          >
+            Close Chat
+          </button>
+
         </div>
       )}
     </>
@@ -313,6 +435,7 @@ function Chatbot() {
 /* ============================================================
    FOOTER
 ============================================================ */
+
 function Footer() {
   return (
     <footer id="contact" className="bg-slate-800 text-slate-300 py-16 text-center mt-20">
@@ -328,12 +451,13 @@ function Footer() {
 /* ============================================================
    APP ROOT
 ============================================================ */
+
 function App() {
   return (
     <>
       <Header />
       <Hero />
-      <About />
+      <Mission />
       <Method />
       <Services />
       <Testimonials />
