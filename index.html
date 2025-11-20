@@ -89,7 +89,6 @@ function loadBestVoice() {
   console.log("Using fallback voice:", selectedVoice?.name);
 }
 
-
 window.speechSynthesis.onvoiceschanged = loadBestVoice;
 
 /* ============================================================
@@ -102,26 +101,20 @@ function speakText(text) {
   text = text.replace(/Reading Connections/gi, "Reee-ding Connections");
 
   const utter = new SpeechSynthesisUtterance(text);
-
   if (selectedVoice) utter.voice = selectedVoice;
 
   utter.pitch = 1;
-  utter.rate = 0.88;   // MUCH clearer, slower
+  utter.rate = 0.88;
   utter.volume = 1;
 
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utter);
 }
 
-
 /* ============================================================
    REUSABLE COMPONENT: SpeakButton
 ============================================================ */
-/* ============================================================
-   UPGRADED SpeakButton — Listen + Stop
-============================================================ */
 function SpeakButton({ text }) {
-  // Adjust “Reading Connections” pronunciation
   const processedText = text.replace(/Reading Connections/gi, "Reee-ding Connections");
 
   return (
@@ -143,7 +136,6 @@ function SpeakButton({ text }) {
   );
 }
 
-
 /* ============================================================
    HEADER
 ============================================================ */
@@ -160,19 +152,36 @@ function Header() {
   return (
     <header className="bg-sky-600 text-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 className="text-2xl font-extrabold">Reading Connections Inc.</h1>
 
+        {/* LOGO INSTEAD OF TEXT */}
+        <img
+          src="https://i.ibb.co/vvRx255r/RCINC-Logo-WHT-1.png"
+          alt="Reading Connections Inc. logo"
+          className="h-12 w-auto"
+        />
+
+        {/* NAVIGATION LINKS */}
         <nav className="hidden md:flex gap-6 text-lg font-semibold">
-          {links.map(link => (
+          {links.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              className="hover:text-slate-200"
+              className="hover:text-slate-200 transition"
             >
               {link.name}
             </a>
           ))}
         </nav>
+
+      </div>
+    </header>
+  );
+}
+</script>
+
+</body>
+</html>
+
 
         <div className="md:hidden">
           <span>☰</span>
