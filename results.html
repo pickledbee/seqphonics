@@ -24,10 +24,10 @@
   <div id="root"></div>
 
   <script>
-    // Ensure the library loaded before running
+    // Simple check to ensure Recharts loaded correctly
     if (typeof Recharts === 'undefined') {
-      console.error("Recharts failed to load. Check your internet connection or script URLs.");
-      document.body.innerHTML = "<h1 style='color:red; padding:20px;'>Error loading chart library.</h1>";
+      console.error("Recharts failed to load.");
+      document.body.innerHTML = "<h1 style='color:red; padding:20px;'>Error loading chart library. Please refresh.</h1>";
     }
 
     const {
@@ -40,7 +40,7 @@
     } = Recharts;
 
     /* ============================================================
-          HEADER (UPDATED WITH HOME LINK)
+          HEADER (With Home Link)
     ============================================================ */
     function Header() {
       return React.createElement(
@@ -50,7 +50,7 @@
           "div",
           { className: "container mx-auto px-6 py-4 flex justify-between items-center" },
           
-          // LEFT SIDE: Logo + Title Group
+          // LEFT: Logo + Title
           React.createElement("div", { className: "flex items-center gap-4" },
             React.createElement("img", {
               src: "https://i.ibb.co/vvRx255r/RCINC-Logo-WHT-1.png",
@@ -64,11 +64,11 @@
             )
           ),
 
-          // RIGHT SIDE: Return to Home Button
+          // RIGHT: Return to Home Button
           React.createElement(
             "a",
             { 
-              href: "index.html", // Points back to your main file
+              href: "index.html", 
               className: "bg-sky-700 hover:bg-sky-800 border border-sky-500 text-white px-4 py-2 rounded-lg font-semibold transition text-sm flex items-center gap-2 shadow-sm" 
             },
             "← Return to Home"
@@ -78,7 +78,7 @@
     }
 
     /* ============================================================
-          RESULTS PAGE (NO JSX)
+          RESULTS PAGE (With Title)
     ============================================================ */
     function ResultsPage() {
       const [activeTab, setActiveTab] = React.useState("overview");
@@ -126,6 +126,19 @@
       return React.createElement(
         "div",
         { className: "p-8 container mx-auto" },
+
+        /* --- NEW TITLE SECTION --- */
+        React.createElement(
+          "h2",
+          { className: "text-3xl font-extrabold text-center text-slate-800 mb-2" },
+          "Reading Connections Intervention at a Private School"
+        ),
+        React.createElement(
+          "p",
+          { className: "text-center text-slate-500 mb-8" },
+          "Reading Connections Intervention Results"
+        ),
+        /* ------------------------- */
 
         /* TAB BUTTONS */
         React.createElement(
