@@ -5,198 +5,235 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Reading Connections – Results Dashboard</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- React + ReactDOM -->
+  <!-- React 18 UMD -->
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Recharts UMD -->
+  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
 
   <style>
     html { scroll-behavior: smooth; }
-    canvas { max-width: 100%; }
   </style>
 </head>
 
 <body class="bg-slate-100">
 
-<div id="root"></div>
+  <div id="root"></div>
 
-<script>
-  const { useState, useEffect, useRef } = React;
+  <script>
+    const {
+      LineChart, Line,
+      BarChart, Bar,
+      XAxis, YAxis,
+      CartesianGrid, Tooltip, Legend,
+      ResponsiveContainer,
+      ScatterChart, Scatter
+    } = Recharts;
 
-  /* ============================================================
-     HEADER
-  ============================================================ */
-  function Header() {
-    return (
-      <header className="bg-sky-600 text-white shadow-lg sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <img
-            src="https://i.ibb.co/vvRx255r/RCINC-Logo-WHT-1.png"
-            alt="Reading Connections Inc. logo"
-            className="h-12 w-auto"
-          />
-          <h1 className="text-2xl font-bold">Results Dashboard</h1>
-        </div>
-      </header>
+    /* ============================================================
+         HEADER (NO JSX)
+    ============================================================ */
+    function Header() {
+      return React.createElement(
+        "header",
+        { className: "bg-sky-600 text-white shadow-lg sticky top-0 z-50" },
+        React.createElement(
+          "div",
+          { className: "container mx-auto px-6 py-4 flex justify-between items-center" },
+          React.createElement("img", {
+            src: "https://i.ibb.co/vvRx255r/RCINC-Logo-WHT-1.png",
+            alt: "Reading Connections Inc. logo",
+            className: "h-12 w-auto"
+          }),
+          React.createElement(
+            "h1",
+            { className: "text-2xl font-bold" },
+            "Results Dashboard"
+          )
+        )
+      );
+    }
+
+    /* ============================================================
+         RESULTS PAGE (NO JSX)
+    ============================================================ */
+    function ResultsPage() {
+      const [activeTab, setActiveTab] = React.useState("overview");
+
+      const studentData = [
+        { student: 1, fluency1: 2.7, spelling1: 2.2, fluency2: 4.8, spelling2: 4.0 },
+        { student: 2, fluency1: 3.1, spelling1: 1.7, fluency2: 5.1, spelling2: 3.4 },
+        { student: 3, fluency1: 2.9, spelling1: 1.7, fluency2: 4.3, spelling2: 3.4 },
+        { student: 4, fluency1: 2.1, spelling1: 1.0, fluency2: 3.9, spelling2: 2.7 },
+        { student: 5, fluency1: 3.6, spelling1: 3.0, fluency2: 4.2, spelling2: 4.7 },
+        { student: 6, fluency1: 2.8, spelling1: 2.0, fluency2: 6.4, spelling2: 4.2 },
+        { student: 7, fluency1: 2.0, spelling1: 3.0, fluency2: 3.6, spelling2: 3.7 },
+        { student: 8, fluency1: 3.3, spelling1: 1.7, fluency2: 4.8, spelling2: 4.7 },
+        { student: 9, fluency1: 3.1, spelling1: 2.7, fluency2: 4.5, spelling2: 4.7 },
+        { student: 10, fluency1: 3.0, spelling1: 1.7, fluency2: 4.9, spelling2: 3.4 },
+        { student: 11, fluency1: 5.0, spelling1: 3.2, fluency2: 7.1, spelling2: 6.2 },
+        { student: 12, fluency1: 2.1, spelling1: 1.7, fluency2: 4.4, spelling2: 2.7 },
+        { student: 13, fluency1: 1.0, spelling1: 0.8, fluency2: 2.6, spelling2: 1.2 },
+        { student: 14, fluency1: 7.0, spelling1: 4.2, fluency2: 8.1, spelling2: 5.2 },
+        { student: 15, fluency1: 3.4, spelling1: 2.2, fluency2: 4.9, spelling2: 4.7 },
+        { student: 16, fluency1: 2.3, spelling1: 1.7, fluency2: 4.1, spelling2: 3.7 },
+        { student: 17, fluency1: 3.5, spelling1: 3.2, fluency2: 6.4, spelling2: 4.7 },
+        { student: 18, fluency1: 1.8, spelling1: 1.4, fluency2: 2.6, spelling2: 4.4 },
+        { student: 19, fluency1: 3.3, spelling1: 1.7, fluency2: 3.6, spelling2: 4.2 },
+      ];
+
+      const gainData = studentData.map(s => ({
+        student: s.student,
+        fluencyGain: +(s.fluency2 - s.fluency1).toFixed(2),
+        spellingGain: +(s.spelling2 - s.spelling1).toFixed(2)
+      }));
+
+      const metricsData = [
+        { metric: "Fluency", pre: 3.1, post: 4.8 },
+        { metric: "Spelling", pre: 2.1, post: 4.0 }
+      ];
+
+      const colors = {
+        pre: "#3B82F6",
+        post: "#10B981",
+        fluency: "#8B5CF6",
+        spelling: "#F97316"
+      };
+
+      return React.createElement(
+        "div",
+        { className: "p-8 container mx-auto" },
+
+        /* TAB BUTTONS */
+        React.createElement(
+          "div",
+          { className: "flex gap-4 justify-center mb-10" },
+          ["overview", "progress", "gains", "scatter"].map(tab =>
+            React.createElement(
+              "button",
+              {
+                key: tab,
+                onClick: () => setActiveTab(tab),
+                className:
+                  activeTab === tab
+                    ? "px-6 py-2 bg-sky-600 text-white font-bold rounded-lg shadow"
+                    : "px-6 py-2 bg-white border rounded-lg"
+              },
+              tab.toUpperCase()
+            )
+          )
+        ),
+
+        /* OVERVIEW TAB */
+        activeTab === "overview" &&
+          React.createElement(
+            "div",
+            { className: "bg-white p-8 rounded-xl shadow-lg" },
+            React.createElement("h2", { className: "text-2xl font-bold mb-6" }, "Pre vs Post Assessment"),
+            React.createElement(
+              ResponsiveContainer,
+              { width: "100%", height: 300 },
+              React.createElement(
+                BarChart,
+                { data: metricsData },
+                React.createElement(CartesianGrid, { strokeDasharray: "3 3" }),
+                React.createElement(XAxis, { dataKey: "metric" }),
+                React.createElement(YAxis, null),
+                React.createElement(Tooltip, null),
+                React.createElement(Legend, null),
+                React.createElement(Bar, { dataKey: "pre", fill: colors.pre }),
+                React.createElement(Bar, { dataKey: "post", fill: colors.post })
+              )
+            )
+          ),
+
+        /* PROGRESS TAB */
+        activeTab === "progress" &&
+          React.createElement(
+            "div",
+            { className: "bg-white p-8 rounded-xl shadow-lg" },
+            React.createElement("h2", { className: "text-2xl font-bold mb-6" }, "Student Progress"),
+            React.createElement(
+              ResponsiveContainer,
+              { width: "100%", height: 400 },
+              React.createElement(
+                LineChart,
+                { data: studentData },
+                React.createElement(CartesianGrid, { strokeDasharray: "3 3" }),
+                React.createElement(XAxis, { dataKey: "student" }),
+                React.createElement(YAxis, null),
+                React.createElement(Tooltip, null),
+                React.createElement(Legend, null),
+                React.createElement(Line, { dataKey: "fluency1", stroke: colors.pre }),
+                React.createElement(Line, { dataKey: "fluency2", stroke: colors.fluency }),
+                React.createElement(Line, { dataKey: "spelling1", stroke: "#94A3B8" }),
+                React.createElement(Line, { dataKey: "spelling2", stroke: colors.spelling })
+              )
+            )
+          ),
+
+        /* GAINS TAB */
+        activeTab === "gains" &&
+          React.createElement(
+            "div",
+            { className: "bg-white p-8 rounded-xl shadow-lg" },
+            React.createElement("h2", { className: "text-2xl font-bold mb-6" }, "Individual Gains"),
+            React.createElement(
+              ResponsiveContainer,
+              { width: "100%", height: 400 },
+              React.createElement(
+                BarChart,
+                { data: gainData },
+                React.createElement(CartesianGrid, { strokeDasharray: "3 3" }),
+                React.createElement(XAxis, { dataKey: "student" }),
+                React.createElement(YAxis, null),
+                React.createElement(Tooltip, null),
+                React.createElement(Legend, null),
+                React.createElement(Bar, { dataKey: "fluencyGain", fill: colors.fluency }),
+                React.createElement(Bar, { dataKey: "spellingGain", fill: colors.spelling })
+              )
+            )
+          ),
+
+        /* SCATTER TAB */
+        activeTab === "scatter" &&
+          React.createElement(
+            "div",
+            { className: "bg-white p-8 rounded-xl shadow-lg" },
+            React.createElement("h2", { className: "text-2xl font-bold mb-6" }, "Fluency vs Spelling Correlation"),
+            React.createElement(
+              ResponsiveContainer,
+              { width: "100%", height: 400 },
+              React.createElement(
+                ScatterChart,
+                null,
+                React.createElement(CartesianGrid, { strokeDasharray: "3 3" }),
+                React.createElement(XAxis, { dataKey: "fluency1" }),
+                React.createElement(YAxis, { dataKey: "spelling1" }),
+                React.createElement(Tooltip, null),
+                React.createElement(Scatter, { data: studentData, fill: colors.pre })
+              )
+            )
+          )
+      );
+    }
+
+    /* ============================================================
+         RENDER APP — NO JSX
+    ============================================================ */
+    ReactDOM.createRoot(document.getElementById("root")).render(
+      React.createElement(
+        "div",
+        null,
+        React.createElement(Header),
+        React.createElement(ResultsPage)
+      )
     );
-  }
-
-  /* ============================================================
-     CHART COMPONENT
-  ============================================================ */
-  function ChartComponent({ type, data, options }) {
-    const canvasRef = useRef(null);
-    const chartRef = useRef(null);
-
-    useEffect(() => {
-      if (chartRef.current) chartRef.current.destroy();
-      chartRef.current = new Chart(canvasRef.current, { type, data, options });
-    }, [data]);
-
-    return <canvas ref={canvasRef}></canvas>;
-  }
-
-  /* ============================================================
-     RESULTS PAGE
-  ============================================================ */
-  function ResultsPage() {
-    const [activeTab, setActiveTab] = useState("overview");
-
-    const studentData = [
-      { student: 1, fluency1: 2.7, spelling1: 2.2, fluency2: 4.8, spelling2: 4.0 },
-      { student: 2, fluency1: 3.1, spelling1: 1.7, fluency2: 5.1, spelling2: 3.4 },
-      { student: 3, fluency1: 2.9, spelling1: 1.7, fluency2: 4.3, spelling2: 3.4 },
-      { student: 4, fluency1: 2.1, spelling1: 1.0, fluency2: 3.9, spelling2: 2.7 },
-      { student: 5, fluency1: 3.6, spelling1: 3.0, fluency2: 4.2, spelling2: 4.7 },
-      { student: 6, fluency1: 2.8, spelling1: 2.0, fluency2: 6.4, spelling2: 4.2 },
-      { student: 7, fluency1: 2.0, spelling1: 3.0, fluency2: 3.6, spelling2: 3.7 },
-      { student: 8, fluency1: 3.3, spelling1: 1.7, fluency2: 4.8, spelling2: 4.7 },
-      { student: 9, fluency1: 3.1, spelling1: 2.7, fluency2: 4.5, spelling2: 4.7 },
-      { student: 10, fluency1: 3.0, spelling1: 1.7, fluency2: 4.9, spelling2: 3.4 },
-      { student: 11, fluency1: 5.0, spelling1: 3.2, fluency2: 7.1, spelling2: 6.2 },
-      { student: 12, fluency1: 2.1, spelling1: 1.7, fluency2: 4.4, spelling2: 2.7 },
-      { student: 13, fluency1: 1.0, spelling1: 0.8, fluency2: 2.6, spelling2: 1.2 },
-      { student: 14, fluency1: 7.0, spelling1: 4.2, fluency2: 8.1, spelling2: 5.2 },
-      { student: 15, fluency1: 3.4, spelling1: 2.2, fluency2: 4.9, spelling2: 4.7 },
-      { student: 16, fluency1: 2.3, spelling1: 1.7, fluency2: 4.1, spelling2: 3.7 },
-      { student: 17, fluency1: 3.5, spelling1: 3.2, fluency2: 6.4, spelling2: 4.7 },
-      { student: 18, fluency1: 1.8, spelling1: 1.4, fluency2: 2.6, spelling2: 4.4 },
-      { student: 19, fluency1: 3.3, spelling1: 1.7, fluency2: 3.6, spelling2: 4.2 },
-    ];
-
-    const gainData = studentData.map(s => s.fluency2 - s.fluency1);
-
-    return (
-      <div className="container mx-auto p-8">
-
-        {/* TABS */}
-        <div className="flex justify-center gap-4 mb-10">
-          {["overview", "progress", "gains"].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={
-                activeTab === tab
-                  ? "px-6 py-2 bg-sky-600 text-white font-bold rounded-lg shadow"
-                  : "px-6 py-2 bg-white border rounded-lg"
-              }
-            >
-              {tab.toUpperCase()}
-            </button>
-          ))}
-        </div>
-
-        {/* OVERVIEW */}
-        {activeTab === "overview" && (
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-6">Pre vs Post Assessment</h2>
-            <ChartComponent
-              type="bar"
-              data={{
-                labels: ["Word Fluency", "Spelling"],
-                datasets: [
-                  {
-                    label: "Pre-Test",
-                    data: [3.1, 2.1],
-                    backgroundColor: "#3B82F6"
-                  },
-                  {
-                    label: "Post-Test",
-                    data: [4.8, 4.0],
-                    backgroundColor: "#10B981"
-                  }
-                ]
-              }}
-            />
-          </div>
-        )}
-
-        {/* PROGRESS */}
-        {activeTab === "progress" && (
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-6">Student Progress</h2>
-            <ChartComponent
-              type="line"
-              data={{
-                labels: studentData.map(s => s.student),
-                datasets: [
-                  {
-                    label: "Fluency (Pre)",
-                    data: studentData.map(s => s.fluency1),
-                    borderColor: "#3B82F6",
-                    tension: 0.3
-                  },
-                  {
-                    label: "Fluency (Post)",
-                    data: studentData.map(s => s.fluency2),
-                    borderColor: "#8B5CF6",
-                    tension: 0.3
-                  }
-                ]
-              }}
-            />
-          </div>
-        )}
-
-        {/* GAINS */}
-        {activeTab === "gains" && (
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-6">Individual Student Gains</h2>
-            <ChartComponent
-              type="bar"
-              data={{
-                labels: studentData.map(s => s.student),
-                datasets: [
-                  {
-                    label: "Fluency Gain",
-                    data: studentData.map(s => (s.fluency2 - s.fluency1)),
-                    backgroundColor: "#8B5CF6"
-                  }
-                ]
-              }}
-            />
-          </div>
-        )}
-
-      </div>
-    );
-  }
-
-  /* ============================================================
-     RENDER
-  ============================================================ */
-  ReactDOM.createRoot(document.getElementById("root")).render(
-    <>
-      <Header />
-      <ResultsPage />
-    </>
-  );
-</script>
+  </script>
 
 </body>
 </html>
