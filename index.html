@@ -475,9 +475,11 @@
     }
 
     /* ============================================================
-       CONTACT FORM (Integrated with Google Apps Script)
+       CONTACT FORM (Integrated with Google Apps Script + Unsubscribe)
     ============================================================ */
     function ContactSection() {
+      // Form types: 'contact' or 'unsubscribe'
+      const [formType, setFormType] = React.useState("contact");
       const [formData, setFormData] = React.useState({ name: "", grade: "", email: "", concern: "" });
       const [status, setStatus] = React.useState("idle"); // idle, submitting, success, error
 
@@ -489,12 +491,23 @@
         e.preventDefault();
         setStatus("submitting");
 
+        // Construct payload based on form type
+        // If unsubscribing, we send specific "Unsubscribe" data to the sheet
+        const payload = formType === 'contact' 
+          ? formData 
+          : { 
+              name: "Unsubscribe Request", 
+              grade: "N/A", 
+              email: formData.email, 
+              concern: "User requested to UNSUBSCRIBE from mailing list." 
+            };
+
         try {
           await fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
-            mode: "no-cors", // Important for Google Apps Script
+            mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
+            body: JSON.stringify(payload)
           });
 
           setStatus("success");
@@ -509,32 +522,53 @@
         <section id="contact-form" className="py-20 bg-sky-50">
           <div className="container mx-auto px-6 max-w-2xl">
             <h2 className="text-3xl font-extrabold text-center text-slate-900 mb-8">
-              Get In Touch
+              {formType === 'contact' ? "Get In Touch" : "Unsubscribe"}
             </h2>
-            <p className="text-center text-slate-600 mb-8">
-              Serving families in Hobart, Green Bay, and surrounding communities.
-            </p>
+            
+            {formType === 'contact' && (
+              <p className="text-center text-slate-600 mb-8">
+                Serving families in Hobart, Green Bay, and surrounding communities.
+              </p>
+            )}
+
+            {formType === 'unsubscribe' && (
+              <p className="text-center text-slate-600 mb-8">
+                Enter your email address below to be removed from our mailing list.
+              </p>
+            )}
 
             <div className="bg-white p-8 rounded-2xl shadow-lg">
               {status === "success" ? (
                 <div className="text-center py-10">
-                  <p className="text-2xl text-green-600 font-bold">Thank you!</p>
-                  <p className="text-slate-600 mt-2">We have received your message and will contact you shortly.</p>
-                  <button onClick={() => setStatus("idle")} className="mt-6 text-sky-600 underline">Send another</button>
+                  <p className="text-2xl text-green-600 font-bold">
+                    {formType === 'contact' ? "Thank you!" : "Unsubscribe Request Sent"}
+                  </p>
+                  <p className="text-slate-600 mt-2">
+                    {formType === 'contact' 
+                      ? "We have received your message and will contact you shortly." 
+                      : "We have received your request and will remove you from our list."}
+                  </p>
+                  <button onClick={() => setStatus("idle")} className="mt-6 text-sky-600 underline">
+                    {formType === 'contact' ? "Send another message" : "Back to site"}
+                  </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700">Parent Name</label>
-                    <input required name="name" value={formData.name} onChange={handleChange}
-                      className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Jane Doe" />
-                  </div>
+                  {formType === 'contact' && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700">Parent Name</label>
+                        <input required name="name" value={formData.name} onChange={handleChange}
+                          className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Jane Doe" />
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700">Child's Grade</label>
-                    <input name="grade" value={formData.grade} onChange={handleChange}
-                      className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" placeholder="e.g. 2nd Grade" />
-                  </div>
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700">Child's Grade</label>
+                        <input name="grade" value={formData.grade} onChange={handleChange}
+                          className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" placeholder="e.g. 2nd Grade" />
+                      </div>
+                    </>
+                  )}
 
                   <div>
                     <label className="block text-sm font-bold text-slate-700">Email Address</label>
@@ -542,18 +576,33 @@
                       className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" placeholder="jane@example.com" />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700">Primary Concern</label>
-                    <textarea required name="concern" value={formData.concern} onChange={handleChange} rows="3"
-                      className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Tell us what your child is struggling with..."></textarea>
-                  </div>
+                  {formType === 'contact' && (
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700">Primary Concern</label>
+                      <textarea required name="concern" value={formData.concern} onChange={handleChange} rows="3"
+                        className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Tell us what your child is struggling with..."></textarea>
+                    </div>
+                  )}
 
                   <button disabled={status === "submitting"} type="submit"
                     className="w-full py-3 bg-sky-600 text-white font-bold rounded-lg hover:bg-sky-700 transition disabled:opacity-50">
-                    {status === "submitting" ? "Sending..." : "Send Message"}
+                    {status === "submitting" ? "Sending..." : (formType === 'contact' ? "Send Message" : "Unsubscribe")}
                   </button>
 
                   {status === "error" && <p className="text-red-500 text-center text-sm">Something went wrong. Please try again or call us.</p>}
+
+                  {/* Toggle Link */}
+                  <div className="mt-4 text-center">
+                    {formType === 'contact' ? (
+                      <button type="button" onClick={() => { setFormType('unsubscribe'); setStatus('idle'); }} className="text-xs text-slate-400 hover:text-sky-600 underline">
+                        Need to unsubscribe from our list?
+                      </button>
+                    ) : (
+                      <button type="button" onClick={() => { setFormType('contact'); setStatus('idle'); }} className="text-sm text-sky-600 hover:text-sky-800 underline">
+                        &larr; Back to Contact Form
+                      </button>
+                    )}
+                  </div>
                 </form>
               )}
             </div>
