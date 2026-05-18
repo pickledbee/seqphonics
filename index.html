@@ -15,7 +15,7 @@
 
   <!-- ============================================================
        GOOGLE ANALYTICS (GA4)
-  =========================================================== -->
+  ============================================================ -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-WPFGXDVNQP"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -26,18 +26,18 @@
 
   <!-- ============================================================
        TAILWINDCSS
-  =========================================================== -->
+  ============================================================ -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- ============================================================
        REACT + REACTDOM
-  =========================================================== -->
+  ============================================================ -->
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
   <!-- ============================================================
        BABEL (JSX)
-  =========================================================== -->
+  ============================================================ -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
@@ -81,7 +81,7 @@
 
     /* ============================================================
        GLOBAL CONSTANTS
-    =========================================================== */
+    ============================================================ */
     const CONTACT = {
       name: "Reading Connections Inc.",
       phone: "(920) 544-5115",
@@ -92,7 +92,7 @@
 
     /* ============================================================
        AUDIO (text-to-speech)
-    =========================================================== */
+    ============================================================ */
     let selectedVoice = null;
 
     function loadBestVoice() {
@@ -136,7 +136,7 @@
 
     /* ============================================================
        Speak Button Component
-    =========================================================== */
+    ============================================================ */
     function SpeakButton({ text }) {
       const clean = text.replace(/Reading Connections/gi, "Reee-ding Connections");
 
@@ -156,7 +156,7 @@
 
     /* ============================================================
        HEADER
-    =========================================================== */
+    ============================================================ */
     function Header() {
       const [isOpen, setIsOpen] = React.useState(false);
 
@@ -204,7 +204,7 @@
 
     /* ============================================================
        HERO
-    =========================================================== */
+    ============================================================ */
     function Hero() {
       const intro = `Welcome to Reading Connections in Hobart, Wisconsin. For more than 25 years, we’ve helped children and adults strengthen their reading, spelling, and comprehension using a proven multisensory phonics approach. Our students consistently make remarkable progress—often gaining 4.8 months of reading growth in just one month.`;
 
@@ -255,7 +255,7 @@
 
     /* ============================================================
        MISSION
-    =========================================================== */
+    ============================================================ */
     function Mission() {
       const text = `Reading Connections exists to prove that nearly every person—child or adult—can learn to read fluently when taught with a method grounded in brain science. We empower students to rediscover confidence and the joy of learning.`;
 
@@ -292,7 +292,7 @@
 
     /* ============================================================
        HOW IT WORKS
-    =========================================================== */
+    ============================================================ */
     function HowItWorks() {
       const steps = [
         { title: "1. Contact Us", desc: "Reach out via phone or form to discuss your child’s needs." },
@@ -325,7 +325,7 @@
 
     /* ============================================================
        METHOD
-    =========================================================== */
+    ============================================================ */
     function Method() {
       const description = `Our system was developed from decades of research and practical classroom experience. Students learn through a highly effective multisensory method—specifically tracing letters with a pencil while vocalizing the sounds—combined with sequential skills, cognitive reinforcement, and confidence-building strategies that rewire how the brain processes language.`;
 
@@ -363,7 +363,7 @@
 
     /* ============================================================
        SERVICES
-    =========================================================== */
+    ============================================================ */
     function Services() {
       const services = [
         {
@@ -416,7 +416,7 @@
 
     /* ============================================================
        TESTIMONIALS
-    =========================================================== */
+    ============================================================ */
     function Testimonials() {
       const groups = {
         parents: [
@@ -478,7 +478,7 @@
 
     /* ============================================================
        CRM INQUIRY FORM (Apps Script Web App Integration)
-    =========================================================== */
+    ============================================================ */
     function ContactSection({ onShowLegal }) {
       const [formType, setFormType] = React.useState("contact");
       
@@ -490,7 +490,7 @@
         setFormData({ ...formData, [e.target.name]: e.target.value });
       };
 
-      const handleSubmit = (e) => {
+      const handleSubmit = async (e) => {
         e.preventDefault();
         setStatus("submitting");
 
@@ -505,25 +505,28 @@
               message: "User requested to UNSUBSCRIBE from mailing list." 
             };
 
-        // If hosted inside Apps Script Web App, use native google.script.run
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-           google.script.run
-            .withSuccessHandler(function(response) {
-              if (response === "Success") {
-                setStatus("success");
-                setFormData({ parentName: "", email: "", phone: "", grade: "", message: "" });
-              } else {
-                setStatus("error");
-              }
-            })
-            .withFailureHandler(function(error) {
-              setStatus("error");
-            })
-            .processWebLead(payload);
-        } else {
-           // Fallback/Warning if viewing locally outside of Apps Script
-           console.error("google.script.run not found. Form must be hosted on Apps Script to submit.");
-           setStatus("error");
+        // 👇 INTEGRATING WITH GOOGLE APPS SCRIPT VIA FETCH API 👇
+        // Using the live execution URL provided by the user
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxT0CNf1gww0jmFtxm1gjuQHUEMYr7aXOr6Hq6X_eHt373GKbu-J665BIz1b2oDdoo4gg/exec";
+
+        try {
+          const response = await fetch(WEB_APP_URL, {
+            method: "POST",
+            body: JSON.stringify(payload)
+          });
+          
+          const data = await response.json();
+          
+          if (data.status === "Success") {
+            setStatus("success");
+            setFormData({ parentName: "", email: "", phone: "", grade: "", message: "" });
+          } else {
+            console.error("Backend error:", data.message);
+            setStatus("error");
+          }
+        } catch (error) {
+          console.error("Fetch error:", error);
+          setStatus("error");
         }
       };
 
@@ -613,7 +616,7 @@
                     </p>
                   )}
 
-                  {status === "error" && <p className="text-red-500 text-center text-sm font-bold mt-2">An error occurred. Please ensure this is hosted correctly on Google Apps Script.</p>}
+                  {status === "error" && <p className="text-red-500 text-center text-sm font-bold mt-2">An error occurred. Please try again or contact us directly.</p>}
 
                   {/* Toggle Link */}
                   <div className="mt-4 text-center">
@@ -637,7 +640,7 @@
 
     /* ============================================================
        LEGAL PAGE (DOCUMENT VIEW)
-    =========================================================== */
+    ============================================================ */
     function LegalPage({ onBack }) {
       const handlePrint = () => {
         window.print();
@@ -789,7 +792,7 @@
 
     /* ============================================================
        CHATBOT
-    =========================================================== */
+    ============================================================ */
     function Chatbot() {
       const [open, setOpen] = React.useState(false);
       const [messages, setMessages] = React.useState([
@@ -855,7 +858,7 @@
 
     /* ============================================================
        AUDIO SUMMARY
-    =========================================================== */
+    ============================================================ */
     function AudioSummary() {
       const summary = `This is the brief summary of the science-backed reading method from Reading Connections Inc...`;
       return (
@@ -869,7 +872,7 @@
 
     /* ============================================================
        FOOTER
-    =========================================================== */
+    ============================================================ */
     function Footer({ onShowLegal }) {
       return (
         <footer className="bg-slate-900 text-slate-300 py-16 text-center no-print">
@@ -890,7 +893,7 @@
 
     /* ============================================================
        APP ROOT (State-based Routing)
-    =========================================================== */
+    ============================================================ */
     function App() {
       const [page, setPage] = React.useState("home");
 
