@@ -13,9 +13,6 @@
     content="Reading Connections, reading tutoring, dyslexia help, phonics, Hobart Wisconsin, literacy intervention, brain based reading">
   <meta name="author" content="Reading Connections Inc.">
 
-  <!-- ============================================================
-       GOOGLE ANALYTICS (GA4)
-  ============================================================ -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-WPFGXDVNQP"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -24,20 +21,11 @@
     gtag('config', 'G-WPFGXDVNQP');
   </script>
 
-  <!-- ============================================================
-       TAILWINDCSS
-  ============================================================ -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ============================================================
-       REACT + REACTDOM
-  ============================================================ -->
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
-  <!-- ============================================================
-       BABEL (JSX)
-  ============================================================ -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
@@ -61,16 +49,6 @@
       body { background: white; color: black; }
     }
   </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
-  }
-}
-</script>
 </head>
 
 <body class="bg-slate-50 text-slate-800">
@@ -506,7 +484,6 @@
             };
 
         // 👇 INTEGRATING WITH GOOGLE APPS SCRIPT VIA FETCH API 👇
-        // Using the live execution URL provided by the user
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxT0CNf1gww0jmFtxm1gjuQHUEMYr7aXOr6Hq6X_eHt373GKbu-J665BIz1b2oDdoo4gg/exec";
 
         try {
@@ -932,7 +909,9 @@
       );
     }
 
-    const root = ReactDOM.createRoot(document.getElementById("root"));
+    // Explicitly targeting UMD window object references for browser compiler environment compatibility
+    const rootElement = document.getElementById("root");
+    const root = window.ReactDOM.createRoot(rootElement);
     root.render(<App />);
 
   </script>
