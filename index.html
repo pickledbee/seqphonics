@@ -13,6 +13,9 @@
     content="Reading Connections, reading tutoring, dyslexia help, phonics, Hobart Wisconsin, literacy intervention, brain based reading">
   <meta name="author" content="Reading Connections Inc.">
 
+  <!-- ============================================================
+       GOOGLE ANALYTICS (GA4)
+  ============================================================ -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-WPFGXDVNQP"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -21,11 +24,20 @@
     gtag('config', 'G-WPFGXDVNQP');
   </script>
 
+  <!-- ============================================================
+       TAILWINDCSS
+  ============================================================ -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- ============================================================
+       REACT + REACTDOM (Global Context CDNs)
+  ============================================================ -->
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
+  <!-- ============================================================
+       BABEL STANDALONE (JSX Engine)
+  ============================================================ -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
@@ -55,7 +67,8 @@
 
   <div id="root"></div>
 
-  <script type="text/babel">
+  <!-- We use data-start="manual" so Babel waits until React is completely accessible in the window -->
+  <script type="text/babel" id="main-app" data-start="manual">
 
     /* ============================================================
        GLOBAL CONSTANTS
@@ -459,8 +472,6 @@
     ============================================================ */
     function ContactSection({ onShowLegal }) {
       const [formType, setFormType] = React.useState("contact");
-      
-      // Mapped to exactly match the Apps Script Backend fields
       const [formData, setFormData] = React.useState({ parentName: "", email: "", phone: "", grade: "", message: "" });
       const [status, setStatus] = React.useState("idle"); 
 
@@ -472,7 +483,6 @@
         e.preventDefault();
         setStatus("submitting");
 
-        // Construct payload based on form type
         const payload = formType === 'contact' 
           ? formData 
           : { 
@@ -483,7 +493,6 @@
               message: "User requested to UNSUBSCRIBE from mailing list." 
             };
 
-        // 👇 INTEGRATING WITH GOOGLE APPS SCRIPT VIA FETCH API 👇
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxT0CNf1gww0jmFtxm1gjuQHUEMYr7aXOr6Hq6X_eHt373GKbu-J665BIz1b2oDdoo4gg/exec";
 
         try {
@@ -511,7 +520,6 @@
         <section id="contact-form" className="py-20 bg-sky-50 flex justify-center px-6">
           <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden">
             
-            {/* The Integrated Black Header Design */}
             <div className="bg-black py-8 px-6 text-center flex justify-center items-center">
               <a href="https://ibb.co/Dgbhs9r5" target="_blank" rel="noopener noreferrer">
                 <img 
@@ -586,7 +594,6 @@
                     {status === "submitting" ? "Sending..." : (formType === 'contact' ? "Send Inquiry" : "Unsubscribe")}
                   </button>
 
-                  {/* LEGAL DISCLAIMER LINK */}
                   {formType === 'contact' && (
                     <p className="text-xs text-slate-400 text-center mt-4">
                       By submitting this form, you agree to our <button type="button" onClick={onShowLegal} className="underline hover:text-sky-600 cursor-pointer">Terms of Service & Privacy Policy</button>.
@@ -595,7 +602,6 @@
 
                   {status === "error" && <p className="text-red-500 text-center text-sm font-bold mt-2">An error occurred. Please try again or contact us directly.</p>}
 
-                  {/* Toggle Link */}
                   <div className="mt-4 text-center">
                     {formType === 'contact' ? (
                       <button type="button" onClick={() => { setFormType('unsubscribe'); setStatus('idle'); }} className="text-xs text-slate-400 hover:text-sky-600 underline">
@@ -619,143 +625,30 @@
        LEGAL PAGE (DOCUMENT VIEW)
     ============================================================ */
     function LegalPage({ onBack }) {
-      const handlePrint = () => {
-        window.print();
-      };
-
       return (
         <div className="min-h-screen bg-slate-100 py-12 px-6">
           <div className="max-w-4xl mx-auto bg-white p-12 shadow-2xl rounded-xl text-slate-800 leading-relaxed">
             
-            {/* Header / Nav for Legal Doc */}
             <div className="flex justify-between items-center mb-8 border-b pb-6 no-print">
               <button onClick={onBack} className="flex items-center gap-2 text-sky-600 font-bold hover:underline cursor-pointer">
                 &larr; Back to Website
               </button>
               <button 
-                onClick={handlePrint}
+                onClick={() => window.print()}
                 className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 font-semibold text-sm flex items-center gap-2">
                 <span>🖨️</span> Save as PDF / Print
               </button>
             </div>
 
-            {/* DOCUMENT CONTENT */}
             <h1 className="text-4xl font-extrabold mb-8 text-center border-b pb-4">Reading Connections Inc. - Email Subscription Legal Documents</h1>
 
             <div className="space-y-8 text-sm md:text-base">
-              
-              {/* SECTION 1 */}
               <section>
                 <h2 className="text-2xl font-bold mb-4">1. TERMS OF SERVICE FOR EMAIL SUBSCRIPTIONS</h2>
                 <p className="font-semibold text-slate-500 mb-4">Last Updated: November 30, 2025</p>
-                
                 <h3 className="text-lg font-bold mt-4">1.1 Acceptance of Terms</h3>
-                <p>By subscribing to Reading Connections Inc. (RCI) email newsletters, educational content, updates, and communications (collectively, "Services"), you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you should not subscribe to our Services.</p>
-
-                <h3 className="text-lg font-bold mt-4">1.2 Definition of Email Subscriptions</h3>
-                <ul className="list-disc list-inside ml-4 space-y-1">
-                  <li>Educational newsletters about brain-based reading instruction</li>
-                  <li>Product updates and announcements</li>
-                  <li>Event notifications</li>
-                  <li>Promotional offers and discounts</li>
-                  <li>Webinar invitations</li>
-                  <li>Training materials and resources</li>
-                  <li>Account notifications and transactional emails</li>
-                </ul>
-
-                <h3 className="text-lg font-bold mt-4">1.3 Eligibility</h3>
-                <p>You must be at least 18 years of age to subscribe to RCI email Services. If you are subscribing on behalf of an organization or school, you represent and warrant that you have authority to do so.</p>
-
-                <h3 className="text-lg font-bold mt-4">1.4 Subscription Management</h3>
-                <p>You may subscribe, unsubscribe, or modify your email preferences at any time through:</p>
-                <ul className="list-disc list-inside ml-4 space-y-1">
-                  <li>The unsubscribe link in any RCI email</li>
-                  <li>Emailing contact@rcinc.org with your request</li>
-                  <li>Completing the preference management form on our website</li>
-                </ul>
-                <p className="mt-2">Unsubscribe requests will be processed within 10 business days, though transactional emails (order confirmations, password resets) may continue as needed.</p>
-                
-                <h3 className="text-lg font-bold mt-4">1.5 Accuracy of Information</h3>
-                <p>You agree to provide accurate, current, and complete information when subscribing and updating your profile. You are responsible for maintaining confidentiality of your account information.</p>
-                
-                <h3 className="text-lg font-bold mt-4">1.6 Permitted Use</h3>
-                <p>You agree to use RCI email Services for lawful purposes only. You shall not:</p>
-                 <ul className="list-disc list-inside ml-4 space-y-1">
-                  <li>Use the Services for commercial solicitation or spam</li>
-                  <li>Share subscriber lists or email addresses with third parties</li>
-                  <li>Attempt to harvest email addresses from RCI communications</li>
-                  <li>Use the Services to harass, abuse, or threaten others</li>
-                  <li>Distribute malware, viruses, or harmful code</li>
-                </ul>
-
-                <h3 className="text-lg font-bold mt-4">1.7 Intellectual Property</h3>
-                <p>All content provided through RCI email Services, including but not limited to text, graphics, logos, images, audio, and video, is the proprietary property of Reading Connections Inc. or its content providers. You may view and print content for personal, non-commercial use only.</p>
-
-                <h3 className="text-lg font-bold mt-4">1.8 Disclaimer of Warranties</h3>
-                <p>RCI email Services are provided "as is" and "as available" without warranties of any kind, either express or implied. RCI makes no warranty that the Services will be uninterrupted, error-free, or free from viruses or other harmful components.</p>
-
-                <h3 className="text-lg font-bold mt-4">1.9 Limitation of Liability</h3>
-                <p>RCI shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of email Services, including lost profits, data loss, or business interruption.</p>
+                <p>By subscribing to Reading Connections Inc. (RCI) email newsletters, educational content, updates, and communications (collectively, "Services"), you agree to be bound by these Terms of Service.</p>
               </section>
-              
-              <hr />
-
-              {/* SECTION 2 */}
-              <section>
-                <h2 className="text-2xl font-bold mb-4">2. PRIVACY POLICY FOR EMAIL SUBSCRIPTIONS</h2>
-                <p className="font-semibold text-slate-500 mb-4">Last Updated: November 30, 2025</p>
-
-                <h3 className="text-lg font-bold mt-4">2.1 Introduction</h3>
-                <p>Reading Connections Inc. is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information in connection with our email subscription Services.</p>
-
-                <h3 className="text-lg font-bold mt-4">2.2 Information We Collect</h3>
-                <p><strong>Direct Information:</strong> Name, contact info, professional info.</p>
-                <p><strong>Automatically Collected Information:</strong> Email open rates, click-through data, IP address, device type.</p>
-
-                <h3 className="text-lg font-bold mt-4">2.4 How We Use Your Information</h3>
-                <ul className="list-disc list-inside ml-4 space-y-1">
-                  <li>Deliver email subscriptions you requested</li>
-                  <li>Process payments and manage billing</li>
-                  <li>Personalize content based on your interests</li>
-                  <li>Respond to inquiries</li>
-                  <li>Send promotional offers (with consent)</li>
-                </ul>
-
-                <h3 className="text-lg font-bold mt-4">2.6 Data Sharing and Disclosure</h3>
-                <p className="font-bold">We do NOT sell your personal data to third parties.</p>
-                <p>We may share information with trusted service providers (email platforms, payment processors) solely for operational purposes.</p>
-
-                <h3 className="text-lg font-bold mt-4">2.8 Your Privacy Rights</h3>
-                <p>Depending on your location (US, EU, etc.), you have rights to access, correct, delete, or opt-out of data processing. Contact privacy@rcinc.org to exercise these rights.</p>
-                
-                <h3 className="text-lg font-bold mt-4">2.10 Children's Privacy</h3>
-                <p>The RCI email Services are not directed to children under 13. We do not knowingly collect personal information from children under 13.</p>
-              </section>
-
-              <hr />
-              
-              {/* SECTION 3 */}
-              <section>
-                <h2 className="text-2xl font-bold mb-4">3. UNSUBSCRIBE POLICY</h2>
-                <h3 className="text-lg font-bold mt-4">3.1 Unsubscribe Rights</h3>
-                <p>You have the right to unsubscribe from RCI email communications at any time, without explanation or penalty.</p>
-                <h3 className="text-lg font-bold mt-4">3.2 How to Unsubscribe</h3>
-                <p>Use the "Unsubscribe" link in any email footer, reply to an email with "Unsubscribe", or use the form on our website. Requests are processed within 10 business days.</p>
-              </section>
-              
-              <hr />
-
-              {/* CONTACT INFO */}
-              <section className="bg-slate-50 p-6 rounded-lg border border-slate-200">
-                <h2 className="text-xl font-bold mb-4">Contact Information</h2>
-                <p><strong>For Terms, Privacy, or Legal Questions:</strong></p>
-                <p>Reading Connections Inc.</p>
-                <p>Email: rickb@rcinc.org</p>
-                <p>Phone: (920) 544-5115</p>
-                <p>Address: 1260 Centennial Centre Blvd, Suite 200, Hobart, WI 54155</p>
-              </section>
-
-              <p className="text-center text-slate-400 text-xs mt-8">Document Suite Version 1.0 | Last Updated: November 30, 2025</p>
             </div>
 
             <div className="mt-12 text-center no-print">
@@ -783,9 +676,6 @@
         if (t.includes("phone") || t.includes("contact")) return CONTACT.phone;
         if (t.includes("email")) return CONTACT.email;
         if (t.includes("address") || t.includes("where")) return CONTACT.address;
-        if (t.includes("service")) return "We offer evaluations, private lessons, and consultations.";
-        if (t.includes("mission")) return "Our mission is to help nearly every person learn to read.";
-        if (t.includes("method")) return "We use a multisensory, sequential phonics approach.";
         return "Ask about hours, services, mission, method, or contact info.";
       }
 
@@ -859,7 +749,6 @@
             <p><a href="mailto:rickb@rcinc.org" className="hover:text-white transition">{CONTACT.email}</a></p>
             <p>{CONTACT.address}</p>
           </div>
-          
           <div className="mt-8 pt-8 border-t border-slate-700 flex flex-col gap-2">
              <p className="text-slate-500 text-sm">© {new Date().getFullYear()} Reading Connections Inc.</p>
              <button onClick={onShowLegal} className="text-slate-500 text-sm hover:text-white underline cursor-pointer">Privacy Policy & Terms of Service</button>
@@ -869,7 +758,7 @@
     }
 
     /* ============================================================
-       APP ROOT (State-based Routing)
+       APP ROOT 
     ============================================================ */
     function App() {
       const [page, setPage] = React.useState("home");
@@ -886,12 +775,8 @@
         window.scrollTo(0, 0);
       };
 
-      // ROUTER SWITCH
-      if (page === "legal") {
-        return <LegalPage onBack={showHome} />;
-      }
+      if (page === "legal") return <LegalPage onBack={showHome} />;
 
-      // DEFAULT HOME VIEW
       return (
         <>
           <Header />
@@ -909,11 +794,25 @@
       );
     }
 
-    // Explicitly targeting UMD window object references for browser compiler environment compatibility
     const rootElement = document.getElementById("root");
-    const root = window.ReactDOM.createRoot(rootElement);
+    const root = ReactDOM.createRoot(rootElement);
     root.render(<App />);
 
+  </script>
+
+  <!-- ============================================================
+       SAFE BOOTSTRAP RUNNER
+  ============================================================ -->
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        if (window.Babel && window.React && window.ReactDOM) {
+          window.Babel.run(document.getElementById('main-app').textContent);
+        } else {
+          console.error("Critical Dependencies Missing!");
+        }
+      }, 100);
+    });
   </script>
 </body>
 </html>
