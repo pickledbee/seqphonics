@@ -1,21 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <title>Reading Connections Inc. | Brain-Based Reading Instruction</title>
-
-  <meta name="description"
-    content="Reading Connections Inc. helps children and adults achieve rapid reading progress using a proven multisensory brain-science method. Located in Hobart, Wisconsin.">
-  <meta name="keywords"
-    content="Reading Connections, reading tutoring, dyslexia help, phonics, Hobart Wisconsin, literacy intervention, brain based reading">
+  <meta name="description" content="Reading Connections Inc. helps children and adults achieve rapid reading progress using a proven multisensory brain-science method. Located in Hobart, Wisconsin.">
+  <meta name="keywords" content="Reading Connections, reading tutoring, dyslexia help, phonics, Hobart Wisconsin, literacy intervention, brain based reading">
   <meta name="author" content="Reading Connections Inc.">
 
-  <!-- ============================================================
-       GOOGLE ANALYTICS (GA4)
-  ============================================================ -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-WPFGXDVNQP"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -24,38 +17,22 @@
     gtag('config', 'G-WPFGXDVNQP');
   </script>
 
-  <!-- ============================================================
-       TAILWINDCSS
-  ============================================================ -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- ============================================================
-       REACT + REACTDOM (Global Context CDNs)
-  ============================================================ -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-  <!-- ============================================================
-       BABEL STANDALONE (JSX Engine)
-  ============================================================ -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
     html {
       scroll-behavior: smooth;
     }
-
     .speak-btn {
       cursor: pointer;
       font-size: 0.9rem;
       margin-left: 8px;
       color: #0284c7;
     }
-
     .speak-btn:hover {
       text-decoration: underline;
     }
-    
     @media print {
       .no-print { display: none !important; }
       body { background: white; color: black; }
@@ -65,754 +42,583 @@
 
 <body class="bg-slate-50 text-slate-800">
 
-  <div id="root"></div>
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
+  <header class="bg-sky-600 text-white shadow-lg sticky top-0 z-50 no-print">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <img src="https://i.ibb.co/PzYK3cDw/RCINC-Logo-WHT-1.png" alt="Reading Connections Inc. logo" class="h-10 md:h-12 w-auto" />
+      </div>
 
-  <!-- We use data-start="manual" so Babel waits until React is completely accessible in the window -->
-  <script type="text/babel" id="main-app" data-start="manual">
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex gap-6 text-lg font-semibold">
+        <a href="#home" class="hover:text-slate-200 transition">Home</a>
+        <a href="#mission" class="hover:text-slate-200 transition">Mission</a>
+        <a href="#how-it-works" class="hover:text-slate-200 transition">How It Works</a>
+        <a href="#services" class="hover:text-slate-200 transition">Services</a>
+        <a href="#testimonials" class="hover:text-slate-200 transition">Testimonials</a>
+        <a href="#contact-form" class="bg-white text-sky-600 px-4 py-1 rounded hover:bg-slate-100 transition">Contact</a>
+      </nav>
 
-    /* ============================================================
-       GLOBAL CONSTANTS
-    ============================================================ */
-    const CONTACT = {
-      name: "Reading Connections Inc.",
-      phone: "(920) 544-5115",
-      email: "rickb@rcinc.org",
-      address: "1260 Centennial Centre Blvd, Suite 200, Hobart, WI 54155",
-      hours: "Monday — Thursday, 2:00 PM – 6:00 PM"
-    };
+      <!-- Mobile Menu Button -->
+      <button class="md:hidden text-2xl" id="mobileMenuBtn">☰</button>
+    </div>
 
-    /* ============================================================
-       AUDIO (text-to-speech)
-    ============================================================ */
-    let selectedVoice = null;
+    <!-- Mobile Nav -->
+    <nav class="md:hidden bg-sky-700 px-6 py-4 flex flex-col gap-4 font-semibold hidden" id="mobileNav">
+      <a href="#home">Home</a>
+      <a href="#mission">Mission</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#services">Services</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#contact-form">Contact</a>
+    </nav>
+  </header>
 
-    function loadBestVoice() {
-      const voices = window.speechSynthesis.getVoices();
-      const priority = [
-        "Google US English",
-        "Google UK English Female",
-        "Microsoft Aria Online (Natural)",
-        "Microsoft Jenny Online (Natural)"
-      ];
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="home" class="container mx-auto px-6 py-16 md:py-24 md:flex md:items-center md:gap-12">
+    <div class="max-w-2xl">
+      <div class="inline-block bg-sky-100 text-sky-800 px-4 py-1 rounded-full font-bold text-sm mb-6 border border-sky-200">
+        🚀 4.8 Months of Progress in Just 1 Month
+      </div>
 
-      for (const name of priority) {
-        const v = voices.find(voice => voice.name === name);
-        if (v) { selectedVoice = v; return; }
-      }
+      <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">
+        Unlock Your Child's <span class="text-sky-600">Reading Potential.</span>
+      </h1>
 
-      // Fallback
-      selectedVoice =
-        voices.find(v => v.name.includes("Google")) ||
-        voices.find(v => v.name.includes("Natural")) ||
-        voices[0] || null;
-    }
+      <p class="mt-4 text-xl text-slate-600 font-medium">
+        One‑on‑one, brain-based reading instruction for struggling readers in grades preschool–12 in Hobart, WI.
+      </p>
 
-    window.speechSynthesis.onvoiceschanged = loadBestVoice;
+      <div class="mt-6 text-lg text-slate-700 leading-relaxed">
+        Welcome to Reading Connections in Hobart, Wisconsin. For more than 25 years, we've helped children and adults strengthen their reading, spelling, and comprehension using a proven multisensory phonics approach. Our students consistently make remarkable progress—often gaining 4.8 months of reading growth in just one month.
+        <span class="inline-flex items-center gap-2 ml-2 no-print">
+          <button class="text-sky-600 font-semibold hover:underline text-sm speak-btn">🔊 Listen</button>
+          <button class="text-red-500 font-semibold hover:underline text-sm speak-btn">⏹️ Stop</button>
+        </span>
+      </div>
 
+      <div class="mt-10 flex flex-col sm:flex-row gap-4">
+        <a href="#contact-form" class="px-8 py-4 bg-sky-600 text-white font-bold text-lg rounded-lg shadow-lg hover:bg-sky-700 text-center transition">
+          Schedule a Consultation
+        </a>
+        <a href="#how-it-works" class="px-8 py-4 bg-slate-200 text-slate-800 font-bold text-lg rounded-lg shadow hover:bg-slate-300 text-center transition">
+          Learn How It Works
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-12 md:mt-0 relative">
+      <div class="absolute inset-0 bg-sky-600 rounded-2xl rotate-3 opacity-20 transform scale-95"></div>
+      <img src="https://i.ibb.co/99MfYhk5/Gemini-Generated-Image-tqwti7tqwti7tqwt.png" alt="Tutor helping student" class="relative rounded-2xl shadow-2xl w-full max-w-md mx-auto object-cover" />
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MISSION
+  ============================================================ -->
+  <section id="mission" class="py-20 bg-slate-50 border-t">
+    <div class="container mx-auto px-6 max-w-4xl text-center">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">
+        Our Mission: Proven Science, Renewed Confidence
+      </h2>
+
+      <p class="mt-6 text-lg text-slate-700">
+        Reading Connections exists to prove that nearly every person—child or adult—can learn to read fluently when taught with a method grounded in brain science. We empower students to rediscover confidence and the joy of learning.
+      </p>
+
+      <div class="grid sm:grid-cols-3 gap-8 mt-12">
+        <div class="bg-white p-6 rounded-xl shadow border border-slate-100">
+          <p class="text-4xl font-extrabold text-sky-600">25+</p>
+          <p class="mt-2 font-bold text-slate-600">Years of Proven Results</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow border border-slate-100">
+          <p class="text-4xl font-extrabold text-sky-600">9,000+</p>
+          <p class="mt-2 font-bold text-slate-600">Students Empowered</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow border border-slate-100">
+          <p class="text-4xl font-extrabold text-sky-600">100%</p>
+          <p class="mt-2 font-bold text-slate-600">Growth From Word-of-Mouth</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HOW IT WORKS
+  ============================================================ -->
+  <section id="how-it-works" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-center text-slate-900 mb-12">
+        How It Works
+      </h2>
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="relative p-6 bg-slate-50 rounded-xl border border-slate-200 text-center">
+          <div class="w-12 h-12 bg-sky-600 text-white font-bold text-xl rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">1</div>
+          <h3 class="text-xl font-bold text-slate-900">Contact Us</h3>
+          <p class="mt-2 text-slate-600">Reach out via phone or form to discuss your child's needs.</p>
+        </div>
+        <div class="relative p-6 bg-slate-50 rounded-xl border border-slate-200 text-center">
+          <div class="w-12 h-12 bg-sky-600 text-white font-bold text-xl rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">2</div>
+          <h3 class="text-xl font-bold text-slate-900">Evaluation</h3>
+          <p class="mt-2 text-slate-600">We identify specific gaps with a comprehensive assessment.</p>
+        </div>
+        <div class="relative p-6 bg-slate-50 rounded-xl border border-slate-200 text-center">
+          <div class="w-12 h-12 bg-sky-600 text-white font-bold text-xl rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">3</div>
+          <h3 class="text-xl font-bold text-slate-900">Weekly Lessons</h3>
+          <p class="mt-2 text-slate-600">One-on-one, custom sessions targetting reading & spelling.</p>
+        </div>
+        <div class="relative p-6 bg-slate-50 rounded-xl border border-slate-200 text-center">
+          <div class="w-12 h-12 bg-sky-600 text-white font-bold text-xl rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">4</div>
+          <h3 class="text-xl font-bold text-slate-900">See Progress</h3>
+          <p class="mt-2 text-slate-600">Watch confidence grow with regular progress checks.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       METHOD
+  ============================================================ -->
+  <section id="method" class="py-20 bg-slate-100">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-center text-slate-900">
+        A Method Grounded in Brain Science
+      </h2>
+
+      <p class="mt-8 text-lg text-slate-700 max-w-3xl mx-auto text-center">
+        Our system was developed from decades of research and practical classroom experience. Students learn through a highly effective multisensory method—specifically tracing letters with a pencil while vocalizing the sounds—combined with sequential skills, cognitive reinforcement, and confidence-building strategies that rewire how the brain processes language.
+      </p>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-sky-700">Multisensory Learning</h3>
+          <p class="mt-2 text-sm text-slate-600">Visual, auditory, and kinesthetic pathways (like tracing with a pencil) build decoding skills.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-sky-700">Sequential Phonics</h3>
+          <p class="mt-2 text-sm text-slate-600">Cumulative skills from basic sounds to complex words.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-sky-700">Cognitive Reinforcement</h3>
+          <p class="mt-2 text-sm text-slate-600">Strengthening neurological processes for reading.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-sky-700">Emotional Transformation</h3>
+          <p class="mt-2 text-sm text-slate-600">Replacing anxiety and shame with proven success.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SERVICES
+  ============================================================ -->
+  <section id="services" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Our Services</h2>
+        <p class="mt-4 text-lg text-slate-600">
+          Tailored one-on-one instruction. Private and confidential.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div class="flex flex-col bg-slate-50 p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-xl font-bold text-slate-900">Initial Consultation</h3>
+            <span class="bg-sky-100 text-sky-800 text-xs font-bold px-2 py-1 rounded-full">2 hours</span>
+          </div>
+          <p class="text-slate-600">We review history, set goals, and create a custom plan.</p>
+        </div>
+        <div class="flex flex-col bg-slate-50 p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-xl font-bold text-slate-900">Evaluation</h3>
+            <span class="bg-sky-100 text-sky-800 text-xs font-bold px-2 py-1 rounded-full">1 hour</span>
+          </div>
+          <p class="text-slate-600">Comprehensive testing to establish a reading baseline.</p>
+        </div>
+        <div class="flex flex-col bg-slate-50 p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-xl font-bold text-slate-900">Private Lesson</h3>
+            <span class="bg-sky-100 text-sky-800 text-xs font-bold px-2 py-1 rounded-full">1 hour</span>
+          </div>
+          <p class="text-slate-600">Intensive one-on-one instruction tailored to the student.</p>
+        </div>
+        <div class="flex flex-col bg-slate-50 p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-xl font-bold text-slate-900">Private Lesson</h3>
+            <span class="bg-sky-100 text-sky-800 text-xs font-bold px-2 py-1 rounded-full">30 min</span>
+          </div>
+          <p class="text-slate-600">Focused sessions for younger students or maintenance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TESTIMONIALS
+  ============================================================ -->
+  <section id="testimonials" class="py-20 bg-slate-50">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-center text-slate-900">
+        Success Stories
+      </h2>
+
+      <div class="mt-8 flex justify-center gap-6 border-b border-slate-300 pb-4 text-lg font-bold max-w-md mx-auto">
+        <button class="testimonial-tab active text-sky-600 border-b-4 border-sky-600 pb-1" data-tab="parents">Parents</button>
+        <button class="testimonial-tab text-slate-500 hover:text-slate-800" data-tab="teachers">Teachers</button>
+        <button class="testimonial-tab text-slate-500 hover:text-slate-800" data-tab="students">Students</button>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6 mt-12" id="testimonialContent">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONTACT FORM
+  ============================================================ -->
+  <section id="contact-form" class="py-20 bg-sky-50 flex justify-center px-6">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="bg-black py-8 px-6 text-center flex justify-center items-center">
+        <img src="https://i.ibb.co/PzYK3cDw/RCINC-Logo-WHT-1.png" alt="Reading Connections Inc. Logo" class="max-w-[220px] h-auto" />
+      </div>
+
+      <div class="p-8">
+        <h2 class="text-2xl font-bold text-center text-slate-800 mb-6" id="formTitle">
+          Inquire About Tutoring
+        </h2>
+
+        <div id="formContent">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="bg-slate-900 text-slate-300 py-16 text-center no-print">
+    <h2 class="text-3xl font-extrabold text-white">Reading Connections Inc.</h2>
+    <div class="mt-6 space-y-2 text-lg">
+      <p><a href="tel:9205445115" class="hover:text-white transition">(920) 544-5115</a></p>
+      <p><a href="mailto:rickb@rcinc.org" class="hover:text-white transition">rickb@rcinc.org</a></p>
+      <p>1260 Centennial Centre Blvd, Suite 200, Hobart, WI 54155</p>
+    </div>
+    <div class="mt-8 pt-8 border-t border-slate-700 flex flex-col gap-2">
+      <p class="text-slate-500 text-sm">&copy; <span id="year"></span> Reading Connections Inc.</p>
+      <button id="legalBtn" class="text-slate-500 text-sm hover:text-white underline cursor-pointer">Privacy Policy &amp; Terms of Service</button>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       CHATBOT
+  ============================================================ -->
+  <div class="no-print" id="chatbot"></div>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    // Set year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileNav.classList.toggle('hidden');
+    });
+
+    // Text-to-speech
     function speakText(text) {
       if (!text) return;
-
-      // Fun pronunciation override
       text = text.replace(/Reading Connections/gi, "Reee-ding Connections");
-
       const utter = new SpeechSynthesisUtterance(text);
-      if (selectedVoice) utter.voice = selectedVoice;
       utter.pitch = 1;
       utter.rate = 0.88;
       utter.volume = 1;
-
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utter);
     }
 
-    /* ============================================================
-       Speak Button Component
-    ============================================================ */
-    function SpeakButton({ text }) {
-      const clean = text.replace(/Reading Connections/gi, "Reee-ding Connections");
-
-      return (
-        <span className="inline-flex items-center gap-2 ml-2 no-print">
-          <button onClick={() => speakText(clean)}
-            className="text-sky-600 font-semibold hover:underline text-sm" aria-label="Listen to text">
-            🔊 Listen
-          </button>
-          <button onClick={() => window.speechSynthesis.cancel()}
-            className="text-red-500 font-semibold hover:underline text-sm" aria-label="Stop audio">
-            ⏹️ Stop
-          </button>
-        </span>
-      );
-    }
-
-    /* ============================================================
-       HEADER
-    ============================================================ */
-    function Header() {
-      const [isOpen, setIsOpen] = React.useState(false);
-
-      return (
-        <header className="bg-sky-600 text-white shadow-lg sticky top-0 z-50 no-print">
-          <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <img
-                src="https://i.ibb.co/PzYK3cDw/RCINC-Logo-WHT-1.png"
-                alt="Reading Connections Inc. logo"
-                className="h-10 md:h-12 w-auto"
-              />
-            </div>
-
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex gap-6 text-lg font-semibold">
-              <a href="#home" className="hover:text-slate-200 transition">Home</a>
-              <a href="#mission" className="hover:text-slate-200 transition">Mission</a>
-              <a href="#how-it-works" className="hover:text-slate-200 transition">How It Works</a>
-              <a href="#services" className="hover:text-slate-200 transition">Services</a>
-              <a href="#testimonials" className="hover:text-slate-200 transition">Testimonials</a>
-              <a href="#contact-form" className="bg-white text-sky-600 px-4 py-1 rounded hover:bg-slate-100 transition">Contact</a>
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <button className="md:hidden text-2xl" onClick={() => setIsOpen(!isOpen)}>
-              ☰
-            </button>
-          </div>
-
-          {/* Mobile Nav */}
-          {isOpen && (
-            <nav className="md:hidden bg-sky-700 px-6 py-4 flex flex-col gap-4 font-semibold">
-              <a href="#home" onClick={() => setIsOpen(false)}>Home</a>
-              <a href="#mission" onClick={() => setIsOpen(false)}>Mission</a>
-              <a href="#how-it-works" onClick={() => setIsOpen(false)}>How It Works</a>
-              <a href="#services" onClick={() => setIsOpen(false)}>Services</a>
-              <a href="#testimonials" onClick={() => setIsOpen(false)}>Testimonials</a>
-              <a href="#contact-form" onClick={() => setIsOpen(false)}>Contact</a>
-            </nav>
-          )}
-        </header>
-      );
-    }
-
-    /* ============================================================
-       HERO
-    ============================================================ */
-    function Hero() {
-      const intro = `Welcome to Reading Connections in Hobart, Wisconsin. For more than 25 years, we’ve helped children and adults strengthen their reading, spelling, and comprehension using a proven multisensory phonics approach. Our students consistently make remarkable progress—often gaining 4.8 months of reading growth in just one month.`;
-
-      return (
-        <section id="home" className="container mx-auto px-6 py-16 md:py-24 md:flex md:items-center md:gap-12">
-          <div className="max-w-2xl">
-            {/* Badge */}
-            <div className="inline-block bg-sky-100 text-sky-800 px-4 py-1 rounded-full font-bold text-sm mb-6 border border-sky-200">
-              🚀 4.8 Months of Progress in Just 1 Month
-            </div>
-
-            <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">
-              Unlock Your Child’s <span className="text-sky-600">Reading Potential.</span>
-            </h1>
-
-            <p className="mt-4 text-xl text-slate-600 font-medium">
-              One‑on‑one, brain-based reading instruction for struggling readers in grades preschool–12 in Hobart, WI.
-            </p>
-
-            <div className="mt-6 text-lg text-slate-700 leading-relaxed">
-              {intro}
-              <SpeakButton text={intro} />
-            </div>
-
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <a href="#contact-form"
-                className="px-8 py-4 bg-sky-600 text-white font-bold text-lg rounded-lg shadow-lg hover:bg-sky-700 text-center transition">
-                Schedule a Consultation
-              </a>
-              <a href="#how-it-works"
-                className="px-8 py-4 bg-slate-200 text-slate-800 font-bold text-lg rounded-lg shadow hover:bg-slate-300 text-center transition">
-                Learn How It Works
-              </a>
-            </div>
-          </div>
-
-          <div className="mt-12 md:mt-0 relative">
-            <div className="absolute inset-0 bg-sky-600 rounded-2xl rotate-3 opacity-20 transform scale-95"></div>
-            <img
-              src="https://i.ibb.co/99MfYhk5/Gemini-Generated-Image-tqwti7tqwti7tqwt.png"
-              alt="Tutor helping student"
-              className="relative rounded-2xl shadow-2xl w-full max-w-md mx-auto object-cover"
-            />
-          </div>
-        </section>
-      );
-    }
-
-    /* ============================================================
-       MISSION
-    ============================================================ */
-    function Mission() {
-      const text = `Reading Connections exists to prove that nearly every person—child or adult—can learn to read fluently when taught with a method grounded in brain science. We empower students to rediscover confidence and the joy of learning.`;
-
-      const stats = [
-        { label: "Years of Proven Results", value: "25+" },
-        { label: "Students Empowered", value: "9,000+" },
-        { label: "Growth From Word-of-Mouth", value: "100%" }
-      ];
-
-      return (
-        <section id="mission" className="py-20 bg-slate-50 border-t">
-          <div className="container mx-auto px-6 max-w-4xl text-center">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900">
-              Our Mission: Proven Science, Renewed Confidence
-            </h2>
-
-            <p className="mt-6 text-lg text-slate-700">
-              {text}
-              <SpeakButton text={text} />
-            </p>
-
-            <div className="grid sm:grid-cols-3 gap-8 mt-12">
-              {stats.map(s => (
-                <div key={s.label} className="bg-white p-6 rounded-xl shadow border border-slate-100">
-                  <p className="text-4xl font-extrabold text-sky-600">{s.value}</p>
-                  <p className="mt-2 font-bold text-slate-600">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      );
-    }
-
-    /* ============================================================
-       HOW IT WORKS
-    ============================================================ */
-    function HowItWorks() {
-      const steps = [
-        { title: "1. Contact Us", desc: "Reach out via phone or form to discuss your child’s needs." },
-        { title: "2. Evaluation", desc: "We identify specific gaps with a comprehensive assessment." },
-        { title: "3. Weekly Lessons", desc: "One-on-one, custom sessions targetting reading & spelling." },
-        { title: "4. See Progress", desc: "Watch confidence grow with regular progress checks." }
-      ];
-
-      return (
-        <section id="how-it-works" className="py-20 bg-white">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-center text-slate-900 mb-12">
-              How It Works
-            </h2>
-            <div className="grid md:grid-cols-4 gap-8">
-              {steps.map((step, i) => (
-                <div key={i} className="relative p-6 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <div className="w-12 h-12 bg-sky-600 text-white font-bold text-xl rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    {i + 1}
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900">{step.title.split('. ')[1]}</h3>
-                  <p className="mt-2 text-slate-600">{step.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      );
-    }
-
-    /* ============================================================
-       METHOD
-    ============================================================ */
-    function Method() {
-      const description = `Our system was developed from decades of research and practical classroom experience. Students learn through a highly effective multisensory method—specifically tracing letters with a pencil while vocalizing the sounds—combined with sequential skills, cognitive reinforcement, and confidence-building strategies that rewire how the brain processes language.`;
-
-      const principles = [
-        { title: "Multisensory Learning", desc: "Visual, auditory, and kinesthetic pathways (like tracing with a pencil) build decoding skills." },
-        { title: "Sequential Phonics", desc: "Cumulative skills from basic sounds to complex words." },
-        { title: "Cognitive Reinforcement", desc: "Strengthening neurological processes for reading." },
-        { title: "Emotional Transformation", desc: "Replacing anxiety and shame with proven success." },
-      ];
-
-      return (
-        <section id="method" className="py-20 bg-slate-100">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-center text-slate-900">
-              A Method Grounded in Brain Science
-            </h2>
-
-            <p className="mt-8 text-lg text-slate-700 max-w-3xl mx-auto text-center">
-              {description}
-              <SpeakButton text={description} />
-            </p>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
-              {principles.map(p => (
-                <div key={p.title} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                  <h3 className="text-lg font-bold text-sky-700">{p.title}</h3>
-                  <p className="mt-2 text-sm text-slate-600">{p.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      );
-    }
-
-    /* ============================================================
-       SERVICES
-    ============================================================ */
-    function Services() {
-      const services = [
-        {
-          name: "Initial Consultation",
-          duration: "2 hours",
-          desc: "We review history, set goals, and create a custom plan."
-        },
-        {
-          name: "Evaluation",
-          duration: "1 hour",
-          desc: "Comprehensive testing to establish a reading baseline."
-        },
-        {
-          name: "Private Lesson",
-          duration: "1 hour",
-          desc: "Intensive one-on-one instruction tailored to the student."
-        },
-        {
-          name: "Private Lesson",
-          duration: "30 minutes",
-          desc: "Focused sessions for younger students or maintenance."
+    // Speak buttons
+    document.querySelectorAll('.speak-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        if (btn.textContent.includes('🔊')) {
+          const textToSpeak = btn.closest('.mt-6').querySelector('div').textContent || btn.closest('section').querySelector('p').textContent;
+          speakText(textToSpeak);
+        } else {
+          window.speechSynthesis.cancel();
         }
-      ];
+      });
+    });
 
-      return (
-        <section id="services" className="py-20 bg-white">
-          <div className="container mx-auto px-6">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900">Our Services</h2>
-              <p className="mt-4 text-lg text-slate-600">
-                Tailored one-on-one instruction. Private and confidential.
-              </p>
-            </div>
+    // Testimonials data
+    const testimonials = {
+      parents: [
+        { quote: "My daughter... tested at a 3.3 level for automatic sight words... Her self-confidence is wonderful.", author: "Loretta V." },
+        { quote: "My daughter, Heather... In 6th grade last year, she was far behind... This year she is receiving B's or C's.", author: "Jane K." },
+        { quote: "Thanks to Reading Connections, my three children can read without being frustrated.", author: "Ann N." },
+        { quote: "Children cannot go far if they cannot read. It has helped every one of them.", author: "Pam K." },
+        { quote: "Lexie was reading at a kindergarten level... After 3 months, she is reading at a 1st grade level.", author: "Peg C." }
+      ],
+      teachers: [
+        { quote: "Her methods are fantastic!", author: "A Teacher" },
+        { quote: "The results are extremely impressive.", author: "A Teacher" },
+        { quote: "Mary's reading program has made a wonderful difference.", author: "A Teacher" }
+      ],
+      students: [
+        { quote: "My reading level went up a full grade in three months.", author: "Jayson S." },
+        { quote: "Reading Connections is a fun helping place.", author: "Derek M." },
+        { quote: "It's easier to learn my words and read now.", author: "Alex & Tessa M." }
+      ]
+    };
 
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              {services.map((s, i) => (
-                <div key={i} className="flex flex-col bg-slate-50 p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-xl font-bold text-slate-900">{s.name}</h3>
-                    <span className="bg-sky-100 text-sky-800 text-xs font-bold px-2 py-1 rounded-full">{s.duration}</span>
-                  </div>
-                  <p className="text-slate-600">{s.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      );
-    }
-
-    /* ============================================================
-       TESTIMONIALS
-    ============================================================ */
-    function Testimonials() {
-      const groups = {
-        parents: [
-          { quote: "My daughter... tested at a 3.3 level for automatic sight words... Her self-confidence is wonderful.", author: "Loretta V." },
-          { quote: "My daughter, Heather... In 6th grade last year, she was far behind... This year she is receiving B’s or C’s.", author: "Jane K." },
-          { quote: "Thanks to Reading Connections, my three children can read without being frustrated.", author: "Ann N." },
-          { quote: "Children cannot go far if they cannot read. It has helped every one of them.", author: "Pam K." },
-          { quote: "Lexie was reading at a kindergarten level... After 3 months, she is reading at a 1st grade level.", author: "Peg C." }
-        ],
-        teachers: [
-          { quote: "Her methods are fantastic!", author: "A Teacher" },
-          { quote: "The results are extremely impressive.", author: "A Teacher" },
-          { quote: "Mary’s reading program has made a wonderful difference.", author: "A Teacher" }
-        ],
-        students: [
-          { quote: "My reading level went up a full grade in three months.", author: "Jayson S." },
-          { quote: "Reading Connections is a fun helping place.", author: "Derek M." },
-          { quote: "It’s easier to learn my words and read now.", author: "Alex & Tessa M." }
-        ]
-      };
-
-      const [tab, setTab] = React.useState("parents");
-
-      return (
-        <section id="testimonials" className="py-20 bg-slate-50">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-center text-slate-900">
-              Success Stories
-            </h2>
-
-            <div className="mt-8 flex justify-center gap-6 border-b border-slate-300 pb-4 text-lg font-bold max-w-md mx-auto">
-              {["parents", "teachers", "students"].map(t => (
-                <button
-                  key={t}
-                  onClick={() => setTab(t)}
-                  className={
-                    tab === t
-                      ? "text-sky-600 border-b-4 border-sky-600 pb-1"
-                      : "text-slate-500 hover:text-slate-800"
-                  }
-                >
-                  {t.charAt(0).toUpperCase() + t.slice(1)}
-                </button>
-              ))}
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 mt-12">
-              {groups[tab].map((item, i) => (
-                <div key={i} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                  <p className="italic text-slate-700 text-lg">"{item.quote}"</p>
-                  <p className="mt-4 text-right text-sky-600 font-bold">— {item.author}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      );
-    }
-
-    /* ============================================================
-       CRM INQUIRY FORM (Apps Script Web App Integration)
-    ============================================================ */
-    function ContactSection({ onShowLegal }) {
-      const [formType, setFormType] = React.useState("contact");
-      const [formData, setFormData] = React.useState({ parentName: "", email: "", phone: "", grade: "", message: "" });
-      const [status, setStatus] = React.useState("idle"); 
-
-      const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-      };
-
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        setStatus("submitting");
-
-        const payload = formType === 'contact' 
-          ? formData 
-          : { 
-              parentName: "Unsubscribe Request", 
-              grade: "N/A", 
-              phone: "N/A",
-              email: formData.email, 
-              message: "User requested to UNSUBSCRIBE from mailing list." 
-            };
-
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxT0CNf1gww0jmFtxm1gjuQHUEMYr7aXOr6Hq6X_eHt373GKbu-J665BIz1b2oDdoo4gg/exec";
-
-        try {
-          const response = await fetch(WEB_APP_URL, {
-            method: "POST",
-            body: JSON.stringify(payload)
-          });
-          
-          const data = await response.json();
-          
-          if (data.status === "Success") {
-            setStatus("success");
-            setFormData({ parentName: "", email: "", phone: "", grade: "", message: "" });
-          } else {
-            console.error("Backend error:", data.message);
-            setStatus("error");
-          }
-        } catch (error) {
-          console.error("Fetch error:", error);
-          setStatus("error");
-        }
-      };
-
-      return (
-        <section id="contact-form" className="py-20 bg-sky-50 flex justify-center px-6">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden">
-            
-            <div className="bg-black py-8 px-6 text-center flex justify-center items-center">
-              <a href="https://ibb.co/Dgbhs9r5" target="_blank" rel="noopener noreferrer">
-                <img 
-                  src="https://i.ibb.co/PzYK3cDw/RCINC-Logo-WHT-1.png" 
-                  alt="Reading Connections Inc. Logo" 
-                  className="max-w-[220px] h-auto border-0" 
-                />
-              </a>
-            </div>
-
-            <div className="p-8">
-              <h2 className="text-2xl font-bold text-center text-slate-800 mb-6">
-                {formType === 'contact' ? "Inquire About Tutoring" : "Unsubscribe"}
-              </h2>
-
-              {status === "success" ? (
-                <div className="text-center py-6">
-                  <p className="text-2xl text-green-600 font-bold">
-                    {formType === 'contact' ? "Thank you!" : "Unsubscribe Request Sent"}
-                  </p>
-                  <p className="text-slate-600 mt-2">
-                    {formType === 'contact' 
-                      ? "Your inquiry has been sent successfully. Check your email for a confirmation from our team." 
-                      : "We have received your request and will remove you from our list."}
-                  </p>
-                  <button onClick={() => setStatus("idle")} className="mt-6 text-sky-600 font-bold hover:underline">
-                    {formType === 'contact' ? "Send another message" : "Back to site"}
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {formType === 'contact' && (
-                    <>
-                      <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-1">Parent/Guardian Name</label>
-                        <input required type="text" name="parentName" value={formData.parentName} onChange={handleChange}
-                          className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800" />
-                      </div>
-                    </>
-                  )}
-
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-1">Email Address</label>
-                    <input required type="email" name="email" value={formData.email} onChange={handleChange}
-                      className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800" />
-                  </div>
-
-                  {formType === 'contact' && (
-                    <>
-                      <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-1">Phone Number</label>
-                        <input required type="tel" name="phone" value={formData.phone} onChange={handleChange}
-                          className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800" />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-1">Student Age / Grade Level</label>
-                        <input required type="text" name="grade" value={formData.grade} onChange={handleChange}
-                          className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800" />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-1">How can we help?</label>
-                        <textarea required name="message" value={formData.message} onChange={handleChange} rows="4"
-                          className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800 resize-y"></textarea>
-                      </div>
-                    </>
-                  )}
-
-                  <button disabled={status === "submitting"} type="submit"
-                    className="w-full py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 transition disabled:opacity-50 mt-2">
-                    {status === "submitting" ? "Sending..." : (formType === 'contact' ? "Send Inquiry" : "Unsubscribe")}
-                  </button>
-
-                  {formType === 'contact' && (
-                    <p className="text-xs text-slate-400 text-center mt-4">
-                      By submitting this form, you agree to our <button type="button" onClick={onShowLegal} className="underline hover:text-sky-600 cursor-pointer">Terms of Service & Privacy Policy</button>.
-                    </p>
-                  )}
-
-                  {status === "error" && <p className="text-red-500 text-center text-sm font-bold mt-2">An error occurred. Please try again or contact us directly.</p>}
-
-                  <div className="mt-4 text-center">
-                    {formType === 'contact' ? (
-                      <button type="button" onClick={() => { setFormType('unsubscribe'); setStatus('idle'); }} className="text-xs text-slate-400 hover:text-sky-600 underline">
-                        Need to unsubscribe from our list?
-                      </button>
-                    ) : (
-                      <button type="button" onClick={() => { setFormType('contact'); setStatus('idle'); }} className="text-sm text-sky-600 hover:text-sky-800 underline font-bold">
-                        &larr; Back to Contact Form
-                      </button>
-                    )}
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        </section>
-      );
-    }
-
-    /* ============================================================
-       LEGAL PAGE (DOCUMENT VIEW)
-    ============================================================ */
-    function LegalPage({ onBack }) {
-      return (
-        <div className="min-h-screen bg-slate-100 py-12 px-6">
-          <div className="max-w-4xl mx-auto bg-white p-12 shadow-2xl rounded-xl text-slate-800 leading-relaxed">
-            
-            <div className="flex justify-between items-center mb-8 border-b pb-6 no-print">
-              <button onClick={onBack} className="flex items-center gap-2 text-sky-600 font-bold hover:underline cursor-pointer">
-                &larr; Back to Website
-              </button>
-              <button 
-                onClick={() => window.print()}
-                className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 font-semibold text-sm flex items-center gap-2">
-                <span>🖨️</span> Save as PDF / Print
-              </button>
-            </div>
-
-            <h1 className="text-4xl font-extrabold mb-8 text-center border-b pb-4">Reading Connections Inc. - Email Subscription Legal Documents</h1>
-
-            <div className="space-y-8 text-sm md:text-base">
-              <section>
-                <h2 className="text-2xl font-bold mb-4">1. TERMS OF SERVICE FOR EMAIL SUBSCRIPTIONS</h2>
-                <p className="font-semibold text-slate-500 mb-4">Last Updated: November 30, 2025</p>
-                <h3 className="text-lg font-bold mt-4">1.1 Acceptance of Terms</h3>
-                <p>By subscribing to Reading Connections Inc. (RCI) email newsletters, educational content, updates, and communications (collectively, "Services"), you agree to be bound by these Terms of Service.</p>
-              </section>
-            </div>
-
-            <div className="mt-12 text-center no-print">
-               <button onClick={onBack} className="bg-sky-600 text-white px-6 py-3 rounded-lg font-bold shadow hover:bg-sky-700 cursor-pointer">Accept & Return to Site</button>
-            </div>
-
-          </div>
+    function renderTestimonials(category) {
+      const content = document.getElementById('testimonialContent');
+      content.innerHTML = testimonials[category].map(item => `
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <p class="italic text-slate-700 text-lg">"${item.quote}"</p>
+          <p class="mt-4 text-right text-sky-600 font-bold">— ${item.author}</p>
         </div>
-      );
+      `).join('');
     }
 
-    /* ============================================================
-       CHATBOT
-    ============================================================ */
-    function Chatbot() {
-      const [open, setOpen] = React.useState(false);
-      const [messages, setMessages] = React.useState([
-        { sender: "bot", text: "Hello! How can I help you learn about Reading Connections today?" }
-      ]);
-      const [input, setInput] = React.useState("");
+    // Testimonial tabs
+    document.querySelectorAll('.testimonial-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.testimonial-tab').forEach(t => {
+          t.classList.remove('active', 'text-sky-600', 'border-b-4', 'border-sky-600', 'pb-1');
+          t.classList.add('text-slate-500', 'hover:text-slate-800');
+        });
+        tab.classList.add('active', 'text-sky-600', 'border-b-4', 'border-sky-600', 'pb-1');
+        tab.classList.remove('text-slate-500', 'hover:text-slate-800');
+        renderTestimonials(tab.dataset.tab);
+      });
+    });
 
-      function getBotReply(msg) {
-        const t = msg.toLowerCase();
-        if (t.includes("hour") || t.includes("open")) return "We are open Monday–Thursday, 2–6 PM.";
-        if (t.includes("phone") || t.includes("contact")) return CONTACT.phone;
-        if (t.includes("email")) return CONTACT.email;
-        if (t.includes("address") || t.includes("where")) return CONTACT.address;
-        return "Ask about hours, services, mission, method, or contact info.";
+    // Initial render
+    renderTestimonials('parents');
+
+    // Contact form
+    const formContent = document.getElementById('formContent');
+    let formType = 'contact';
+
+    function renderContactForm() {
+      if (formType === 'contact') {
+        formContent.innerHTML = `
+          <form id="contactForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-1">Parent/Guardian Name</label>
+              <input required type="text" name="parentName" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800" />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-1">Email Address</label>
+              <input required type="email" name="email" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800" />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-1">Phone Number</label>
+              <input required type="tel" name="phone" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800" />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-1">Student Age / Grade Level</label>
+              <input required type="text" name="grade" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800" />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-1">How can we help?</label>
+              <textarea required name="message" rows="4" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800 resize-y"></textarea>
+            </div>
+            <button type="submit" class="w-full py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 transition">
+              Send Inquiry
+            </button>
+            <p class="text-xs text-slate-400 text-center mt-4">
+              By submitting this form, you agree to our Terms of Service & Privacy Policy.
+            </p>
+            <div class="mt-4 text-center">
+              <button type="button" id="unsubBtn" class="text-xs text-slate-400 hover:text-sky-600 underline">
+                Need to unsubscribe from our list?
+              </button>
+            </div>
+          </form>
+        `;
+
+        document.getElementById('unsubBtn').addEventListener('click', () => {
+          formType = 'unsubscribe';
+          document.getElementById('formTitle').textContent = 'Unsubscribe';
+          renderContactForm();
+        });
+
+        document.getElementById('contactForm').addEventListener('submit', handleFormSubmit);
+      } else {
+        formContent.innerHTML = `
+          <form id="unsubForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-1">Email Address</label>
+              <input required type="email" name="email" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-slate-800" />
+            </div>
+            <button type="submit" class="w-full py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 transition">
+              Unsubscribe
+            </button>
+            <div class="mt-4 text-center">
+              <button type="button" id="backBtn" class="text-sm text-sky-600 hover:text-sky-800 underline font-bold">
+                &larr; Back to Contact Form
+              </button>
+            </div>
+          </form>
+        `;
+
+        document.getElementById('backBtn').addEventListener('click', () => {
+          formType = 'contact';
+          document.getElementById('formTitle').textContent = 'Inquire About Tutoring';
+          renderContactForm();
+        });
+
+        document.getElementById('unsubForm').addEventListener('submit', handleFormSubmit);
       }
+    }
 
-      function sendMessage() {
-        if (!input.trim()) return;
-        setMessages(m => [...m, { sender: "user", text: input }]);
-        setTimeout(() => {
-          setMessages(m => [...m, { sender: "bot", text: getBotReply(input) }]);
-        }, 500);
-        setInput("");
-      }
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const payload = formType === 'contact' 
+        ? Object.fromEntries(formData)
+        : {
+            parentName: "Unsubscribe Request",
+            grade: "N/A",
+            phone: "N/A",
+            email: formData.get('email'),
+            message: "User requested to UNSUBSCRIBE from mailing list."
+          };
 
-      return (
-        <div className="no-print">
-          {!open && (
-            <button onClick={() => setOpen(true)} className="fixed bottom-6 right-6 bg-sky-600 text-white p-4 rounded-full shadow-2xl text-2xl z-50 hover:scale-105 transition">
+      const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxT0CNf1gww0jmFtxm1gjuQHUEMYr7aXOr6Hq6X_eHt373GKbu-J665BIz1b2oDdoo4gg/exec";
+
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === "Success") {
+          formContent.innerHTML = `
+            <div class="text-center py-6">
+              <p class="text-2xl text-green-600 font-bold">
+                ${formType === 'contact' ? "Thank you!" : "Unsubscribe Request Sent"}
+              </p>
+              <p class="text-slate-600 mt-2">
+                ${formType === 'contact' 
+                  ? "Your inquiry has been sent successfully. Check your email for a confirmation from our team." 
+                  : "We have received your request and will remove you from our list."}
+              </p>
+              <button onclick="location.reload()" class="mt-6 text-sky-600 font-bold hover:underline">
+                ${formType === 'contact' ? "Send another message" : "Back to site"}
+              </button>
+            </div>
+          `;
+        } else {
+          alert("Error: " + data.message);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("An error occurred. Please try again.");
+      });
+    }
+
+    renderContactForm();
+
+    // Chatbot
+    const chatbotContainer = document.getElementById('chatbot');
+    let chatOpen = false;
+
+    chatbotContainer.innerHTML = `
+      <button id="chatBtn" class="fixed bottom-6 right-6 bg-sky-600 text-white p-4 rounded-full shadow-2xl text-2xl z-50 hover:scale-105 transition">
+        💬
+      </button>
+    `;
+
+    document.getElementById('chatBtn').addEventListener('click', () => {
+      chatOpen = !chatOpen;
+      if (chatOpen) {
+        chatbotContainer.innerHTML = `
+          <div class="fixed bottom-6 right-6 w-full max-w-sm h-96 bg-white rounded-xl shadow-2xl flex flex-col border overflow-hidden z-50">
+            <div class="bg-sky-600 text-white p-4 font-bold flex justify-between items-center">
+              <span>Reading Connections Chat</span>
+              <button id="closeChat" class="text-white hover:text-slate-200">✕</button>
+            </div>
+            <div class="flex-1 p-4 overflow-y-auto bg-slate-50 space-y-3" id="messages">
+              <div class="flex justify-start">
+                <div class="px-4 py-2 rounded-lg max-w-[80%] text-sm bg-slate-200 text-slate-800">
+                  Hello! How can I help you learn about Reading Connections today?
+                </div>
+              </div>
+            </div>
+            <div class="p-3 border-t flex gap-2">
+              <input id="chatInput" class="flex-1 border rounded-full px-4 py-2 text-sm outline-none focus:border-sky-500" placeholder="Type a message..." />
+              <button id="sendBtn" class="bg-sky-600 text-white rounded-full px-4 py-2 text-sm font-bold hover:bg-sky-700">Send</button>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('closeChat').addEventListener('click', () => {
+          chatOpen = false;
+          chatbotContainer.innerHTML = `
+            <button id="chatBtn" class="fixed bottom-6 right-6 bg-sky-600 text-white p-4 rounded-full shadow-2xl text-2xl z-50 hover:scale-105 transition">
               💬
             </button>
-          )}
+          `;
+          document.getElementById('chatBtn').addEventListener('click', arguments.callee);
+        });
 
-          {open && (
-            <div className="fixed bottom-6 right-6 w-full max-w-sm h-96 bg-white rounded-xl shadow-2xl flex flex-col border overflow-hidden z-50">
-              <div className="bg-sky-600 text-white p-4 font-bold flex justify-between items-center">
-                <span>Reading Connections Chat</span>
-                <button onClick={() => setOpen(false)} className="text-white hover:text-slate-200">✕</button>
-              </div>
-              <div className="flex-1 p-4 overflow-y-auto bg-slate-50 space-y-3">
-                {messages.map((m, i) => (
-                  <div key={i} className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`px-4 py-2 rounded-lg max-w-[80%] text-sm ${m.sender === "user" ? "bg-sky-600 text-white" : "bg-slate-200 text-slate-800"}`}>
-                      {m.text}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="p-3 border-t flex gap-2">
-                <input className="flex-1 border rounded-full px-4 py-2 text-sm outline-none focus:border-sky-500"
-                  value={input} placeholder="Type a message..." onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" ? sendMessage() : null} />
-                <button onClick={sendMessage} className="bg-sky-600 text-white rounded-full px-4 py-2 text-sm font-bold">Send</button>
+        function getBotReply(msg) {
+          const t = msg.toLowerCase();
+          if (t.includes("hour") || t.includes("open")) return "We are open Monday–Thursday, 2–6 PM.";
+          if (t.includes("phone") || t.includes("contact")) return "(920) 544-5115";
+          if (t.includes("email")) return "rickb@rcinc.org";
+          if (t.includes("address") || t.includes("where")) return "1260 Centennial Centre Blvd, Suite 200, Hobart, WI 54155";
+          return "Ask about hours, services, mission, method, or contact info.";
+        }
+
+        function sendMessage() {
+          const input = document.getElementById('chatInput');
+          const msg = input.value.trim();
+          if (!msg) return;
+
+          const messages = document.getElementById('messages');
+          messages.innerHTML += `
+            <div class="flex justify-end">
+              <div class="px-4 py-2 rounded-lg max-w-[80%] text-sm bg-sky-600 text-white">
+                ${msg}
               </div>
             </div>
-          )}
-        </div>
-      );
-    }
+          `;
+          input.value = '';
 
-    /* ============================================================
-       AUDIO SUMMARY
-    ============================================================ */
-    function AudioSummary() {
-      const summary = `This is the brief summary of the science-backed reading method from Reading Connections Inc...`;
-      return (
-        <div className="text-center py-10 bg-white no-print">
-          <button onClick={() => speakText(summary)} className="px-6 py-3 bg-slate-100 text-sky-700 font-bold rounded-lg hover:bg-slate-200 transition">
-            🔊 Listen to Summary
-          </button>
-        </div>
-      );
-    }
-
-    /* ============================================================
-       FOOTER
-    ============================================================ */
-    function Footer({ onShowLegal }) {
-      return (
-        <footer className="bg-slate-900 text-slate-300 py-16 text-center no-print">
-          <h2 className="text-3xl font-extrabold text-white">{CONTACT.name}</h2>
-          <div className="mt-6 space-y-2 text-lg">
-            <p><a href="tel:9205445115" className="hover:text-white transition">{CONTACT.phone}</a></p>
-            <p><a href="mailto:rickb@rcinc.org" className="hover:text-white transition">{CONTACT.email}</a></p>
-            <p>{CONTACT.address}</p>
-          </div>
-          <div className="mt-8 pt-8 border-t border-slate-700 flex flex-col gap-2">
-             <p className="text-slate-500 text-sm">© {new Date().getFullYear()} Reading Connections Inc.</p>
-             <button onClick={onShowLegal} className="text-slate-500 text-sm hover:text-white underline cursor-pointer">Privacy Policy & Terms of Service</button>
-          </div>
-        </footer>
-      );
-    }
-
-    /* ============================================================
-       APP ROOT 
-    ============================================================ */
-    function App() {
-      const [page, setPage] = React.useState("home");
-
-      const showLegal = (e) => {
-        if(e) e.preventDefault();
-        setPage("legal");
-        window.scrollTo(0, 0);
-      };
-
-      const showHome = (e) => {
-        if(e) e.preventDefault();
-        setPage("home");
-        window.scrollTo(0, 0);
-      };
-
-      if (page === "legal") return <LegalPage onBack={showHome} />;
-
-      return (
-        <>
-          <Header />
-          <Hero />
-          <Mission />
-          <HowItWorks />
-          <Method />
-          <Services />
-          <Testimonials />
-          <ContactSection onShowLegal={showLegal} />
-          <AudioSummary />
-          <Chatbot />
-          <Footer onShowLegal={showLegal} />
-        </>
-      );
-    }
-
-    const rootElement = document.getElementById("root");
-    const root = ReactDOM.createRoot(rootElement);
-    root.render(<App />);
-
-  </script>
-
-  <!-- ============================================================
-       SAFE BOOTSTRAP RUNNER
-  ============================================================ -->
-  <script>
-    window.addEventListener('DOMContentLoaded', function() {
-      setTimeout(function() {
-        if (window.Babel && window.React && window.ReactDOM) {
-          window.Babel.run(document.getElementById('main-app').textContent);
-        } else {
-          console.error("Critical Dependencies Missing!");
+          setTimeout(() => {
+            messages.innerHTML += `
+              <div class="flex justify-start">
+                <div class="px-4 py-2 rounded-lg max-w-[80%] text-sm bg-slate-200 text-slate-800">
+                  ${getBotReply(msg)}
+                </div>
+              </div>
+            `;
+            messages.scrollTop = messages.scrollHeight;
+          }, 500);
         }
-      }, 100);
+
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.getElementById('chatInput').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') sendMessage();
+        });
+      }
     });
   </script>
+
 </body>
 </html>
