@@ -6,7 +6,7 @@
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Reading Connections Inc. | Dyslexia &amp; Reading Help in Hobart, WI</title>
-<meta name="description" content="One-on-one reading instruction for students with dyslexia, children with autism, English language learners and other struggling readers, preschool through grade 12 and adults, in Hobart, Wisconsin. 25+ years, 9,000+ students.">
+<meta name="description" content="One-on-one reading instruction for students with dyslexia, children with autism, English language learners and other struggling readers, preschool through grade 12 and adults, in person in Hobart, Wisconsin or online anywhere in the United States. 25+ years, 9,000+ students.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -73,6 +73,11 @@
   .hero-ctas{justify-content:center}
   .badge{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:9px 16px;border-radius:999px;font-weight:800;font-size:14px;margin-bottom:24px}
   .badge b{color:var(--sun)}
+  .nationwide{display:flex;align-items:center;gap:16px;max-width:640px;margin:40px auto 0;padding:16px 22px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,206,64,.45);color:#d8e2f3;text-decoration:none;text-align:left;font-size:16px;line-height:1.5;transition:background .2s}
+  .nationwide:hover{background:rgba(255,255,255,.14)}
+  .nationwide b{color:#fff;display:block;font-size:17px}
+  .nw-ic{flex:none;width:48px;height:48px;border-radius:14px;background:var(--sun);color:var(--navy);display:flex;align-items:center;justify-content:center}
+  .nw-ic svg{width:26px;height:26px}
   .hero h1{font-size:clamp(44px,6vw,76px);font-weight:900}
   .hero h1 em{font-style:italic;font-weight:600;color:var(--sun)}
   .hero p.lead{font-size:clamp(18px,1.6vw,21px);color:#d8e2f3;margin:24px 0 32px;max-width:46ch}
@@ -249,7 +254,7 @@
 </head>
 <body>
 
-<div class="topbar">Specializing in dyslexia. Now enrolling for one-on-one lessons. <a href="tel:+19205445115">Call (920) 544-5115</a> to reserve your spot.</div>
+<div class="topbar">Specializing in dyslexia. In person in Hobart or online anywhere in the U.S. <a href="tel:+19205445115">Call (920) 544-5115</a> to reserve your spot.</div>
 
 <header class="nav">
   <div class="wrap nav-inner">
@@ -276,7 +281,7 @@
       <div>
         <span class="badge">🚀 <span><b>4.8 months</b> of reading growth in just 1 month</span></span>
         <h1 id="heroTitle">Unlock your child's <em>reading potential.</em></h1>
-        <p class="lead" id="heroLead">One-on-one reading instruction for students with dyslexia, children with autism and other struggling readers, from preschool to adults, right here in Hobart, Wisconsin.</p>
+        <p class="lead" id="heroLead">One-on-one reading instruction for students with dyslexia, children with autism and other struggling readers, from preschool to adults, in person in Hobart, Wisconsin, or online anywhere in the United States.</p>
         <div class="hero-ctas">
           <a class="btn btn-sun" href="#contact">Schedule a Consultation</a>
           <a class="btn btn-ghost" href="#how">See How It Works</a>
@@ -285,6 +290,10 @@
             <span>Listen to this page</span>
           </button>
         </div>
+        <a class="nationwide" href="#contact">
+          <span class="nw-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-3v10l-5-3"/></svg></span>
+          <span><b>Not near Hobart? We can still help.</b> Readers of all ages anywhere in the United States can learn with us through online video lessons.</span>
+        </a>
       </div>
 
     </div>
@@ -414,7 +423,7 @@
         <div class="svc reveal"><span class="time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>30 minutes</span><h3>Private Lesson</h3><p>A shorter one-on-one session, ideal for younger readers.</p><a href="#contact">Ask about lessons →</a></div>
       </div>
       <div class="who reveal">
-        <span>🧠 Dyslexia</span><span>🧩 Autism</span><span>🌎 English as a Second Language</span><span>📚 Preschool – Grade 12</span><span>🧑 Adults</span><span>✏️ Spelling</span><span>📖 Comprehension</span><span>⚡ Fluency</span>
+        <span>🧠 Dyslexia</span><span>🧩 Autism</span><span>🌎 English as a Second Language</span><span>📚 Preschool – Grade 12</span><span>🧑 Adults</span><span>💻 Online Video Lessons (Nationwide)</span><span>✏️ Spelling</span><span>📖 Comprehension</span><span>⚡ Fluency</span>
       </div>
     </div>
   </section>
@@ -573,7 +582,7 @@
   if(!("speechSynthesis" in window)) lb.remove(); else lb.onclick=()=>{
     if(speechSynthesis.speaking){speechSynthesis.cancel();lb.classList.remove("on");lb.querySelector("span").textContent="Listen to this page";return}
     const txt=[document.getElementById("heroTitle").innerText,document.getElementById("heroLead").innerText,
-      "Most of our students have dyslexia, and we also work with children with autism. Our students often gain four point eight months of reading growth in just one month. Call us at 9 2 0, 5 4 4, 5 1 1 5 to schedule a consultation."].join(" ");
+      "Most of our students have dyslexia, and we also work with children with autism. We help readers of all ages anywhere in the United States through online video lessons. Our students often gain four point eight months of reading growth in just one month. Call us at 9 2 0, 5 4 4, 5 1 1 5 to schedule a consultation."].join(" ");
     const u=new SpeechSynthesisUtterance(txt);u.rate=.95;u.onend=()=>{lb.classList.remove("on");lb.querySelector("span").textContent="Listen to this page"};
     speechSynthesis.speak(u);lb.classList.add("on");lb.querySelector("span").textContent="Stop";
   };
