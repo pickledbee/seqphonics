@@ -509,16 +509,17 @@
         <p class="sub">Tell us a little about your reader and we'll be in touch.</p>
         <form id="inq">
           <div class="two">
-            <div class="field"><label for="pn">Your name</label><input id="pn" required></div>
-            <div class="field"><label for="ph">Phone</label><input id="ph" type="tel"></div>
+            <div class="field"><label for="pn">Your name</label><input id="pn" required maxlength="80" autocomplete="name"></div>
+            <div class="field"><label for="ph">Phone</label><input id="ph" type="tel" maxlength="30" autocomplete="tel"></div>
           </div>
-          <div class="field"><label for="em">Email</label><input id="em" type="email" required></div>
+          <div class="field"><label for="em">Email</label><input id="em" type="email" required maxlength="120" autocomplete="email"></div>
           <div class="two">
             <div class="field"><label for="whoh">Who needs help?</label><select id="whoh"><option>My child</option><option>Myself (adult)</option><option>English language learner</option><option>Other</option></select></div>
-            <div class="field"><label for="gr">Grade / age</label><input id="gr" placeholder="e.g. 3rd grade"></div>
+            <div class="field"><label for="gr">Grade / age</label><input id="gr" placeholder="e.g. 3rd grade" maxlength="60"></div>
           </div>
           <div class="field"><label for="dx">Any diagnosis?</label><select id="dx"><option>Not sure / none</option><option>Dyslexia</option><option>Autism</option><option>ADHD</option><option>Other</option></select></div>
-          <div class="field"><label for="msg">What are you noticing?</label><textarea id="msg" placeholder="Struggling with sounding out words, spelling, reading speed…"></textarea></div>
+          <div class="field"><label for="msg">What are you noticing?</label><textarea id="msg" maxlength="1500" placeholder="Struggling with sounding out words, spelling, reading speed…"></textarea></div>
+          <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden"><label for="website">Website (leave blank)</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
           <button class="btn btn-sun" type="submit">Send Inquiry</button>
           <p class="form-note" id="fnote">We usually reply within one business day.</p>
           <p class="form-note"><button type="button" id="unsubBtn" style="background:none;border:0;color:#8f9bb5;text-decoration:underline;font:inherit;font-size:12px;cursor:pointer">Need to unsubscribe from our list?</button></p>
@@ -590,9 +591,11 @@
   // inquiry form -> Reading Connection's Leads (Apps Script)
   const RC_SCRIPT="https://script.google.com/macros/s/AKfycbxT0CNf1gww0jmFtxm1gjuQHUEMYr7aXOr6Hq6X_eHt373GKbu-J665BIz1b2oDdoo4gg/exec";
   const card=document.querySelector(".form-card");
+  const T0=Date.now();
   const done=(title,msg)=>{card.innerHTML='<div style="text-align:center;padding:40px 10px"><div style="font:700 30px Fraunces,serif;color:var(--sun);margin-bottom:10px">'+title+'</div><p style="color:#c9d3e6;font-size:17px;line-height:1.6">'+msg+'</p></div>'};
   const fail=(btn,label)=>{btn.disabled=false;btn.textContent=label;document.getElementById("fnote").innerHTML='Something went wrong. Please call <a href="tel:+19205445115" style="color:#fff">(920) 544-5115</a> or email <a href="mailto:rickb@rcinc.org" style="color:#fff">rickb@rcinc.org</a>.'};
   async function sendLead(payload){
+    payload.v=2; payload.t=Date.now()-T0; payload.website=(document.getElementById("website")||{}).value||"";
     const r=await fetch(RC_SCRIPT,{method:"POST",body:JSON.stringify(payload)});
     const d=await r.json(); if(d.status!=="Success") throw new Error(d.message||d.status);
   }
